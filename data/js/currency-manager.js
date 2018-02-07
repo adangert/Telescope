@@ -15,9 +15,15 @@
 
         updateExchangeRate: function () {
             return preferences.getCurrency().then(function (currency) {
-                return util.getJSON('https://api.bitcoinaverage.com/ticker/' + currency);
+                return util.getJSON('https://api.coinmarketcap.com/v1/ticker/bitcoin-cash/?convert=' + currency);;
             }).then(function (response) {
-                return preferences.setExchangeRate(response['24h_avg']);
+
+
+                return preferences.getCurrency().then(function (currency) {
+                  return preferences.setExchangeRate(response[0]['price_'+currency.toLowerCase()]);
+
+                });
+
             });
         },
 

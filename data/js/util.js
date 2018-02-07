@@ -36,6 +36,7 @@
     util.prototype = {
         getJSON: function (url) {
             if (typeof chrome !== 'undefined') {
+              console.log("getting json");
                 return request(url).then(JSON.parse);
             } else {
                 return ret.message('getJSON', url);

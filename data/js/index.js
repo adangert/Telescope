@@ -27,7 +27,7 @@ $(document).ready(function () {
 
         function setQRCodes() {
             $('#qrcode').html(createQRCodeCanvas(wallet.getAddress()));
-            $('#textAddress').text(wallet.getAddress());
+            $('#textAddress').text(wallet.getOldAddress());
         }
     }
     wallet.setBalanceListener(function (balance) {
@@ -345,7 +345,8 @@ $(document).ready(function () {
     $('#importPrivateKeyConfirm').click(function () {
         var privateKey = $('#importPrivateKeyPrivateKey').val();
         try {
-            new Bitcoin.ECKey(privateKey).getExportedPrivateKey();
+            new bch.PrivateKey(privateKey).toString();
+            //new Bitcoin.ECKey(privateKey).getExportedPrivateKey();
         } catch (e) {
             $('#importPrivateKeyBadPrivateKey').slideDown();
             return;

@@ -12,6 +12,7 @@
 (function (window) {
     var balance = 0,
         address = '',
+        old_address = '',
         privateKey = '',
         isEncrypted = false,
         websocket = null,
@@ -22,6 +23,10 @@
 
         getAddress: function () {
             return address;
+        },
+
+        getOldAddress: function () {
+            return old_address;
         },
 
         getBalance: function () {
@@ -39,21 +44,32 @@
 
         // Create a new address
         generateAddress: function (password) {
+            console.log("gen new address");
             return new Promise(function (resolve, reject) {
                 if (ret.validatePassword(password)) {
-                    var eckey = new Bitcoin.ECKey(false);
+                    var pair = new bch.PrivateKey()
+                    var privkey = pair.toString();
+                    //address = privateKey.toAddress().toString();
+                    console.log(privkey);
+                    //var eckey = new Bitcoin.ECKey(false);
+                    console.log("privateKey");
                     if (isEncrypted) {
                         if (typeof chrome !== 'undefined') {
-                            privateKey = CryptoJS.AES.encrypt(eckey.getExportedPrivateKey(), password);
+                            console.log(privateKey);
+                            privateKey = CryptoJS.AES.encrypt(privkey, password);
                         } else {
-                            privateKey = JSON.parse(CryptoJS.AES.encrypt(eckey.getExportedPrivateKey(), password, {format:jsonFormatter}));
+                            privateKey = JSON.parse(CryptoJS.AES.encrypt(privkey, password, {format:jsonFormatter}));
                         }
                     } else {
-                        privateKey = eckey.getExportedPrivateKey();
+                        privateKey = privkey;
                     }
-                    address = eckey.getBitcoinAddress().toString();
+                    console.log("oldy");
+                    old_address = pair.toAddress().toString();
+
+                    address = pair.toAddress().toString(bch.Address.CashAddrFormat);
+                    console.log("barance");
                     balance = 0;
-                    Promise.all([preferences.setAddress(address), preferences.setPrivateKey(privateKey), preferences.setIsEncrypted(isEncrypted)]).then(function () {
+                    Promise.all([preferences.setAddress(address), preferences.setOldAddress(old_address), preferences.setPrivateKey(privateKey), preferences.setIsEncrypted(isEncrypted)]).then(function () {
                         updateBalance()
                         resolve();
                     });
@@ -66,11 +82,12 @@
         // Restore the previously saved address
         restoreAddress: function () {
             return new Promise(function (resolve, reject) {
-                Promise.all([preferences.getAddress(), preferences.getPrivateKey(), preferences.getIsEncrypted()]).then(function (values) {
+                Promise.all([preferences.getAddress(), preferences.getOldAddress(), preferences.getPrivateKey(), preferences.getIsEncrypted()]).then(function (values) {
                     if (values[0].length > 0) {
                         address = values[0];
-                        privateKey = values[1];
-                        isEncrypted = values[2];
+                        old_address = values[1];
+                        privateKey = values[2];
+                        isEncrypted = values[3];
                         updateBalance();
                         resolve();
                     } else {
@@ -82,22 +99,28 @@
 
         // Import an address using a private key
         importAddress: function (password, _privateKey) {
+          console.log("about to import it");
             return new Promise(function (resolve, reject) {
                 if (ret.validatePassword(password)) {
                     try {
-                        var eckey = new Bitcoin.ECKey(_privateKey);
+                      console.log("GONNA IMPORT");
+                        //var eckey = new Bitcoin.ECKey(_privateKey);
+                        var pair = new bch.PrivateKey(_privateKey)
+                        console.log("IMPORTED");
+                        var privkey = pair.toString();
                         if (isEncrypted) {
                             if (typeof chrome !== 'undefined') {
-                                privateKey = CryptoJS.AES.encrypt(eckey.getExportedPrivateKey(), password);
+                                privateKey = CryptoJS.AES.encrypt(privkey, password);
                             } else {
-                                privateKey = JSON.parse(CryptoJS.AES.encrypt(eckey.getExportedPrivateKey(), password, {format:jsonFormatter}));
+                                privateKey = JSON.parse(CryptoJS.AES.encrypt(privkey, password, {format:jsonFormatter}));
                             }
                         } else {
-                            privateKey = eckey.getExportedPrivateKey();
+                            privateKey = privkey;
                         }
-                        address = eckey.getBitcoinAddress().toString();
+                        address = pair.toAddress().toString(bch.Address.CashAddrFormat);
+                        old_address = pair.toAddress().toString();
                         balance = 0;
-                        Promise.all([preferences.setAddress(address), preferences.setPrivateKey(privateKey), preferences.setLastBalance(0)]).then(function () {
+                        Promise.all([preferences.setAddress(address),preferences.setOldAddress(old_address), preferences.setPrivateKey(privateKey), preferences.setLastBalance(0)]).then(function () {
                             updateBalance();
                             resolve();
                         });
@@ -161,8 +184,15 @@
                 balance = result;
                 if (balanceListener) balanceListener(balance);
                 // Check blockchain.info for the current balance
-                util.get('https://blockchain.info/q/addressbalance/' + address).then(function (response) {
-                    balance = response;
+                console.log("WOWOWOWO");
+                util.get('https://blockdozer.com/insight-api/addr/' + old_address + '?noTxList=1').then(function (response) {
+                    var json = JSON.parse(response);
+                    balance = json["balanceSat"] + json["unconfirmedBalanceSat"];
+                    console.log('https://blockdozer.com/insight-api/addr/' + old_address + '?noTxList=1')
+
+                    console.log(response);
+                    console.log(json["addrStr"]);
+                    console.log(balance);
                     return preferences.setLastBalance(balance);
                 }).then(function () {
                     if (balanceListener) balanceListener(balance);
@@ -170,37 +200,80 @@
                     if (websocket) {
                         websocket.close();
                     }
+
+
+                      //var eventToListenTo = 'tx'
+                      var eventToListenTo = '1KTHQfEfuWXLxWe9A3gLcAeiRgDRSi7anc'
+                      var room = 'inv'
+                      //var room = '1KTHQfEfuWXLxWe9A3gLcAeiRgDRSi7anc'
+
+                      var socket = io("https://blockdozer.com/");
+                      socket.on('connect', function() {
+                        // Join the room.
+                        socket.emit('subscribe', room);
+                        //socket.emit('subscribe', 'bitcoind/addresstxid', [ old_address ])
+                        //socket.emit('subscribe', [ old_address ])
+                      })
+                      socket.on(eventToListenTo, function(data) {
+                        console.log("New transaction received: ");
+                        console.log(data);
+
+                      })
+
+
+
+                      // {txid: "651383b588b74de8c097d8f384e15597e821cc955e6a4aa040db9abd327c0d3c", valueOut: 7.6820984, vout: Array(3), isRBF: false}
+                      // isRBF
+                      // :
+                      // false
+                      // txid
+                      // :
+                      // "651383b588b74de8c097d8f384e15597e821cc955e6a4aa040db9abd327c0d3c"
+                      // valueOut
+                      // :
+                      // 7.6820984
+                      // vout
+                      // :
+                      // (3) [{…}, {…}, {…}]
+                      //socket.on('bitcoind/addresstxid', data => console.log('new address data:', data))
+                      //socket.on('connect', () => socket.emit('subscribe', 'bitcoind/addresstxid', [ 'my_address_here' ]))
+
                     // Create a new websocket to blockchain.info
-                    websocket = new WebSocket("ws://ws.blockchain.info:8335/inv");
-                    websocket.onopen = function() {
-                        // Tell the websocket we want to monitor the address
-                        websocket.send('{"op":"addr_sub", "addr":"' + address + '"}');
-                    };
-                    websocket.onmessage = function (evt) {
-                        // Parse the new transaction
-                        var json = JSON.parse(evt.data);
-                        var inputs = json.x.inputs;
-                        var outputs = json.x.out;
-                        var i;
-                        // Subtract all inputs from the balance
-                        for (i = 0; i < inputs.length; i++) {
-                            var input = inputs[i].prev_out;
-                            if (input.addr === address) {
-                                balance = Number(balance) - Number(input.value);
-                            }
-                        }
-                        // Add all output to the balance
-                        for (i = 0; i < outputs.length; i++) {
-                            var output = outputs[i];
-                            if (output.addr === address) {
-                                balance = Number(balance) + Number(output.value);
-                            }
-                        }
-                        // Save the new balance and notify the listener
-                        preferences.setLastBalance(balance).then(function () {
-                            if (balanceListener) balanceListener(balance);
-                        });
-                    };
+                    // webSocket = new WebSocket("https://blockdozer.com/socket.io/1/")
+                    //websocket = new WebSocket("ws://ws.blockchain.info:8335/inv");
+
+                    // websocket.onopen = function() {
+                    //     // Tell the websocket we want to monitor the address
+                    //     websocket.send('{"op":"addr_sub", "addr":"' + old_address + '"}');
+                    // };
+                    // websocket.onmessage = function (evt) {
+                    //     // Parse the new transaction
+                    //     var json = JSON.parse(evt.data);
+                    //     var inputs = json.x.inputs;
+                    //     var outputs = json.x.out;
+                    //     var i;
+                    //     // Subtract all inputs from the balance
+                    //     for (i = 0; i < inputs.length; i++) {
+                    //         var input = inputs[i].prev_out;
+                    //         if (input.addr === address) {
+                    //             balance = Number(balance) - Number(input.value);
+                    //         }
+                    //     }
+                    //     // Add all output to the balance
+                    //     for (i = 0; i < outputs.length; i++) {
+                    //         var output = outputs[i];
+                    //         if (output.addr === address) {
+                    //             balance = Number(balance) + Number(output.value);
+                    //         }
+                    //     }
+                    //     // Save the new balance and notify the listener
+                    //     preferences.setLastBalance(balance).then(function () {
+                    //         if (balanceListener) balanceListener(balance);
+                    //     });
+                    // };
+
+
+
                 });
             });
         }
@@ -217,7 +290,7 @@
                 // If we have a new password we use it, otherwise leave cleartext
                 if (newPassword) {
                     if (typeof chrome !== 'undefined') {
-                        privateKey = CryptoJS.AES.encrypt(eckey.getExportedPrivateKey(), newPassword);
+                        privateKey = CryptoJS.AES.encrypt(decryptedPrivateKey, newPassword);
                     } else {
                         privateKey = JSON.parse(CryptoJS.AES.encrypt(decryptedPrivateKey, newPassword, {format:jsonFormatter}));
                     }

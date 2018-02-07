@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
 
-    "name": "BitBrowser Bitcoin Wallet",
-    "author": "Andrew Toth",
-    "description": "Bitcoin wallet in the browser. Send and receive instantly on any web page.",
-    "version": "1.1",
+    "name": "WebTipper Bitcoin Cash Wallet",
+    "author": "Aaron Angert",
+    "description": "Bitcoin cash wallet in the browser. Send and receive instantly on any web page.",
+    "version": "1.0",
 
     "icons": {
         "16": "data/bitcoin16.png",
@@ -22,7 +22,8 @@
             "js": [
                 "data/js/libs/jquery.min.js",
                 "data/js/libs/cryptojs.min.js",
-                "data/js/libs/bitcoinjs-lib.min.js",
+                "data/js/libs/bitcoincash-0.1.10.min.js",
+                "data/js/libs/socket.io.js",
                 "data/js/util.js",
                 "data/js/preferences.js",
                 "data/js/currency-manager.js",
@@ -47,7 +48,7 @@
               "19": "data/bitcoin19.png",
               "38": "data/bitcoin38.png"
         },
-        "default_title": "Bitcoin Wallet",
+        "default_title": "WebTipper",
         "default_popup": "data/index.html"
     }
 }

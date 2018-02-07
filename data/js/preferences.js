@@ -11,6 +11,7 @@
 (function (window) {
 
     var ADDRESS = "wallet.address",
+        OLD_ADDRESS = "wallet.old_address",
         PRIVATE_KEY = "wallet.private_key",
         IS_ENCRYPTED = "wallet.is_encrypted",
         LAST_BALANCE = "wallet.last_balance",
@@ -25,6 +26,7 @@
             if (typeof chrome !== 'undefined') {
                 var object = {};
                 object[ADDRESS] = '';
+                object[OLD_ADDRESS] = '';
                 object[PRIVATE_KEY] = '';
                 object[IS_ENCRYPTED] = false;
                 object[LAST_BALANCE] = 0;
@@ -36,6 +38,7 @@
                 util.message('get').then(function (message) {
                     if (typeof message[PRIVATE_KEY] === 'undefined') {
                         message[ADDRESS] = '';
+                        message[OLD_ADDRESS] = '';
                         message[PRIVATE_KEY] = '';
                         message[IS_ENCRYPTED] = false;
                         message[LAST_BALANCE] = 0;
@@ -56,6 +59,7 @@
     function get(pref) {
         return function () {
             return sync().then(function (values) {
+                console.log(values[pref]);
                 return values[pref];
             });
         };
@@ -79,6 +83,11 @@
         getAddress: get(ADDRESS),
         setAddress: function (address) {
             return set(ADDRESS, address);
+        },
+
+        getOldAddress: get(OLD_ADDRESS),
+        setOldAddress: function (old_address) {
+            return set(OLD_ADDRESS, old_address);
         },
 
         getPrivateKey: get(PRIVATE_KEY),
