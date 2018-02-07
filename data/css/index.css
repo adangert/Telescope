@@ -1,0 +1,52 @@
+.container {
+    margin-left: 0px;
+    width: 360px;
+}
+
+a:hover {
+    color: #428bca;
+    text-decoration: none !important;
+}
+
+body .modal-dialog {
+    margin: 0px;
+    width: 360px;
+    overflow: hidden;
+}
+
+#privateKeyQRCode {
+    margin-left: 77px;
+}
+
+#qrcode {
+    margin-left: 86px;
+}
+
+#settingsButton {
+    margin-left: 219px;
+}
+
+#settingsMenu {
+    margin-left: 76px;
+}
+
+.no-padding {
+    margin: 0px;
+}
+
+#sendConfirmationText,
+#privateKeyText {
+    word-wrap: break-word;
+}
+
+.panel {
+    margin-bottom: 0px;
+}
+
+#cover {
+    background: url("ajax-loader.gif") no-repeat scroll center center rgba(255,255,255,0.5);
+    z-index: 2147483647;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}

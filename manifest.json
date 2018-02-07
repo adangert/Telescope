@@ -1,0 +1,53 @@
+{
+    "manifest_version": 2,
+
+    "name": "BitBrowser Bitcoin Wallet",
+    "author": "Andrew Toth",
+    "description": "Bitcoin wallet in the browser. Send and receive instantly on any web page.",
+    "version": "1.1",
+
+    "icons": {
+        "16": "data/bitcoin16.png",
+        "48": "data/bitcoin48.png",
+        "128": "data/bitcoin128.png"
+    },
+
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
+
+    "permissions": ["contextMenus", "activeTab", "<all_urls>", "storage"],
+
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": [
+                "data/js/libs/jquery.min.js",
+                "data/js/libs/cryptojs.min.js",
+                "data/js/libs/bitcoinjs-lib.min.js",
+                "data/js/util.js",
+                "data/js/preferences.js",
+                "data/js/currency-manager.js",
+                "data/js/wallet.js",
+                "data/js/paypopup.js",
+                "data/js/hoverpopup.js"
+            ],
+            "all_frames": true
+        }
+    ],
+
+    "background": {
+        "scripts": ["data/js/background.js"]
+    },
+
+    "web_accessible_resources": [
+        "data/*"
+    ],
+
+    "browser_action": {
+        "default_icon": {
+              "19": "data/bitcoin19.png",
+              "38": "data/bitcoin38.png"
+        },
+        "default_title": "Bitcoin Wallet",
+        "default_popup": "data/index.html"
+    }
+}

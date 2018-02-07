@@ -1,0 +1,12 @@
+{
+  "name": "bitcoinwallet",
+  "title": "BitBrowser Bitcoin Wallet",
+  "id": "jid1-sqPdj54n2PcVOQ",
+  "description": "Bitcoin wallet in the browser. Send and receive instantly on any web page.",
+  "author": "Andrew Toth",
+  "license": "MIT",
+  "version": "1.1",
+  "permissions": {
+      "cross-domain-content": ["https://blockchain.info/", "https://api.bitcoinaverage.com/"]
+  }
+}

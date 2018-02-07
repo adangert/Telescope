@@ -1,0 +1,40 @@
+body {
+    background-color : transparent;
+}
+
+.alert {
+    margin-bottom: 5px;
+    padding: 5px;
+    font-size: 12px;
+    width: 156px;
+}
+
+.alert-success {
+    margin-bottom: 0px;
+}
+
+.form-group {
+    margin-bottom: 5px;
+}
+
+.btn-sm {
+    width: 156px;
+}
+
+.popover {
+    margin-left: 5px;
+    display: block;
+}
+
+.popover-content {
+    padding: 5px;
+}
+
+.progress {
+    width: 156px;
+    margin-bottom: 0px;
+}
+
+.progress-bar {
+    width: 100%;
+}
