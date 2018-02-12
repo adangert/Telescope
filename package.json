@@ -7,6 +7,15 @@
   "license": "MIT",
   "version": "1.0",
   "permissions": {
-      "cross-domain-content": ["https://blockchain.info/", "https://api.bitcoinaverage.com/", "https://blockdozer.com", "https://api.coinmarketcap.com/"]
+    "cross-domain-content": [
+      "https://blockchain.info/",
+      "https://api.bitcoinaverage.com/",
+      "https://blockdozer.com",
+      "https://api.coinmarketcap.com/",
+      "https://bch-insight.bitpay.com"
+    ]
+  },
+  "dependencies": {
+    "bitcoincashjs": "^0.1.10"
   }
 }

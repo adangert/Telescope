@@ -15,6 +15,7 @@
         request = function (url, type, data) {
             return new Promise(function (resolve, reject) {
                 var req = new XMLHttpRequest();
+                //req.setRequestHeader('Cache-Control', 'no-cache');
                 req.open((type ? type : 'GET'), url, true);
                 req.onload = function () {
                     if (req.status == 200) {
@@ -27,7 +28,7 @@
                     reject(Error('Network error'));
                 }
                 if (type === 'POST') {
-                    req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                    req.setRequestHeader('Content-type', 'application/json');
                 }
                 req.send(data);
             });

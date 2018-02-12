@@ -23,6 +23,7 @@
                 "data/js/libs/jquery.min.js",
                 "data/js/libs/cryptojs.min.js",
                 "data/js/libs/bitcoincash-0.1.10.min.js",
+                "data/js/libs/BigInteger.min.js",
                 "data/js/libs/socket.io.js",
                 "data/js/util.js",
                 "data/js/preferences.js",

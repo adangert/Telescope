@@ -185,56 +185,46 @@
                 if (balanceListener) balanceListener(balance);
                 // Check blockchain.info for the current balance
                 console.log("WOWOWOWO");
-                util.get('https://blockdozer.com/insight-api/addr/' + old_address + '?noTxList=1').then(function (response) {
+                util.get('https://bch-insight.bitpay.com/api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime()).then(function (response) {
+                    console.log("MMMNONONO");
                     var json = JSON.parse(response);
                     balance = json["balanceSat"] + json["unconfirmedBalanceSat"];
-                    console.log('https://blockdozer.com/insight-api/addr/' + old_address + '?noTxList=1')
+                    console.log('https://bch-insight.bitpay.com/api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime() )
 
                     console.log(response);
                     console.log(json["addrStr"]);
                     console.log(balance);
                     return preferences.setLastBalance(balance);
                 }).then(function () {
-                    if (balanceListener) balanceListener(balance);
-                    // Close the websocket if it was still open
-                    if (websocket) {
-                        websocket.close();
-                    }
+                    //web sockets currently not functional
+
+                    // if (balanceListener) balanceListener(balance);
+                    // // Close the websocket if it was still open
+                    // if (websocket) {
+                    //     websocket.close();
+                    // }
+                    //
+                    //
+                    //   //
+                    //   //var eventToListenTo = 'tx'
+                    //   //var room = 'inv'
+                    //   console.log("on tothe good stuff");
+                    //   var socket = io("https://bch-insight.bitpay.com");
+                    //   socket.on('connect', function() {
+                    //     // Join the room.
+                    //     socket.emit('subscribe', room);
+                    //     //socket.emit('subscribe', 'bitcoind/addresstxid', [ old_address ])
+                    //     //socket.emit('subscribe', [ old_address ])
+                    //   })
+                    //   socket.on(eventToListenTo, function(data) {
+                    //     console.log("New transaction received: ");
+                    //     console.log(data);
+                    //
+                    //   })
 
 
-                      //var eventToListenTo = 'tx'
-                      var eventToListenTo = '1KTHQfEfuWXLxWe9A3gLcAeiRgDRSi7anc'
-                      var room = 'inv'
-                      //var room = '1KTHQfEfuWXLxWe9A3gLcAeiRgDRSi7anc'
-
-                      var socket = io("https://blockdozer.com/");
-                      socket.on('connect', function() {
-                        // Join the room.
-                        socket.emit('subscribe', room);
-                        //socket.emit('subscribe', 'bitcoind/addresstxid', [ old_address ])
-                        //socket.emit('subscribe', [ old_address ])
-                      })
-                      socket.on(eventToListenTo, function(data) {
-                        console.log("New transaction received: ");
-                        console.log(data);
-
-                      })
 
 
-
-                      // {txid: "651383b588b74de8c097d8f384e15597e821cc955e6a4aa040db9abd327c0d3c", valueOut: 7.6820984, vout: Array(3), isRBF: false}
-                      // isRBF
-                      // :
-                      // false
-                      // txid
-                      // :
-                      // "651383b588b74de8c097d8f384e15597e821cc955e6a4aa040db9abd327c0d3c"
-                      // valueOut
-                      // :
-                      // 7.6820984
-                      // vout
-                      // :
-                      // (3) [{…}, {…}, {…}]
                       //socket.on('bitcoind/addresstxid', data => console.log('new address data:', data))
                       //socket.on('connect', () => socket.emit('subscribe', 'bitcoind/addresstxid', [ 'my_address_here' ]))
 
@@ -308,70 +298,137 @@
         });
     };
 
+    // function get_new_address(old){
+    //   return old;
+    // }
     // Send bitcoin from the wallet to another address
     wallet.prototype.send = function (sendAddress, amount, fee, password) {
         return new Promise(function (resolve, reject) {
             var decryptedPrivateKey = ret.getDecryptedPrivateKey(password);
             if (decryptedPrivateKey) {
                 // Get all unspent outputs from blockchain.info to generate our inputs
-                util.getJSON('https://blockchain.info/unspent?address=' + address).then(function (json) {
-                    var inputs = json.unspent_outputs,
-                        selectedOuts = [],
-                        eckey = new Bitcoin.ECKey(decryptedPrivateKey),
+                util.getJSON('https://bch-insight.bitpay.com/api/addr/' + address+'/utxo').then(function (json) {
+                  console.log(json);
+                  console.log("BEEP");
+                    var inputs = json,
+                        selectedOuts = [];
+                        //eckey = new Bitcoin.ECKey(decryptedPrivateKey),
                         // Total cost is amount plus fee
-                        totalInt = Number(amount) + Number(fee),
-                        txValue = new BigInteger('' + totalInt, 10),
-                        availableValue = BigInteger.ZERO;
+                        var totalInt = Number(amount) + Number(fee);
+                        var txValue = new bigInt('' + totalInt, 10);
+
+                        var availableValue = bigInt.zero;
+                        console.log("BOOP");
+                        console.log(totalInt);
+                        console.log(txValue);
+
+                        var utxos = [];
                     // Gather enough inputs so that their value is greater than or equal to the total cost
                     for (var i = 0; i < inputs.length; i++) {
                         selectedOuts.push(inputs[i]);
-                        availableValue = availableValue.add(new BigInteger('' + inputs[i].value, 10));
+                        console.log(inputs[i].satoshis);
+                        availableValue = availableValue.add(new bigInt('' + inputs[i].satoshis, 10));
+                        console.log(availableValue);
+
+                        var new_address = '';
+
+                        if (inputs[i].address.indexOf("bitcoincash:") == -1){
+                          new_address = 'bitcoincash:'+inputs[i].address;
+                        }else{
+                          new_address = inputs[i].address;
+                        }
+
+                        legacy_utxo_address = bch.Address.fromString(new_address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
+                        var utxo = {
+                        'txId' : inputs[i].txid,
+                        'outputIndex' : inputs[i].vout,
+                        'address' : legacy_utxo_address,
+                        'script' : inputs[i].scriptPubKey,
+                        'satoshis' : inputs[i].satoshis
+                      };
+                        utxos.push(utxo);
                         if (availableValue.compareTo(txValue) >= 0) break;
                     }
+                    console.log(utxos);
+                    console.log("HERE NOW");
+                    console.log(availableValue);
                     // If there aren't enough unspent outputs to available then we can't send the transaction
                     if (availableValue.compareTo(txValue) < 0) {
+                        console.log("WOAHHHHHH");
                         reject(Error('Insufficient funds'));
                     } else {
                         // Create the transaction
-                        var sendTx = new Bitcoin.Transaction();
+                        console.log("making the transaction");
+                        //var sendTx = new Bitcoin.Transaction();
+                        console.log("first thing first");
+                        console.log(sendAddress);
+                        console.log(address);
+
+                        var legacy_address = bch.Address.fromString(address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
+                        var legacy_sendaddress = bch.Address.fromString(sendAddress,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
+                        console.log(utxos)
+                        console.log(legacy_address);
+                        console.log(Number(amount));
+                        console.log(Number(fee));
+                        console.log(legacy_sendaddress);
+                        console.log(decryptedPrivateKey);
+
+                        var transaction = new bch.Transaction()
+                          .from(utxos) // using the last UXTO to sign the next transaction
+                          .to(legacy_sendaddress, Number(amount)) // Send 10000 Satoshi's
+                          .fee(Number(fee))
+                          .change(legacy_address)
+                          .sign(decryptedPrivateKey);
+
+                        console.log("made it to the transaction");
+                        console.log(transaction);
+
+
+
+
                         // Add all our unspent outputs to the transaction as the inputs
-                        for (i = 0; i < selectedOuts.length; i++) {
-                            var hash = Crypto.util.bytesToBase64(Crypto.util.hexToBytes(selectedOuts[i].tx_hash));
-                            var script = new Bitcoin.Script(Crypto.util.hexToBytes(selectedOuts[i].script));
-                            var txin = new Bitcoin.TransactionIn({
-                                outpoint: {
-                                    hash: hash,
-                                    index: selectedOuts[i].tx_output_n
-                                },
-                                script: script,
-                                sequence: 4294967295
-                            });
-                            sendTx.addInput(txin);
-                        }
-                        // Add the send address to the transaction as the output
-                        sendTx.addOutput(new Bitcoin.Address(sendAddress), new BigInteger('' + amount, 10));
-                        // Add any leftover value to the transaction as an output pointing back to this wallet,
-                        // minus the fee of course
-                        var changeValue = availableValue.subtract(txValue);
-                        if (changeValue.compareTo(BigInteger.ZERO) > 0) {
-                            sendTx.addOutput(eckey.getBitcoinAddress(), changeValue);
-                        }
-                        // Sign all the input hashes
-                        var hashType = 1; // SIGHASH_ALL
-                        for (i = 0; i < sendTx.ins.length; i++) {
-                            var connectedScript = sendTx.ins[i].script;
-                            hash = sendTx.hashTransactionForSignature(connectedScript, i, hashType);
-                            var signature = eckey.sign(hash);
-                            signature.push(parseInt(hashType, 10));
-                            var pubKey = eckey.getPub();
-                            script = new Bitcoin.Script();
-                            script.writeBytes(signature);
-                            script.writeBytes(pubKey);
-                            sendTx.ins[i].script = script;
-                        }
-                        // Push the transaction to blockchain.info
-                        var data = 'tx=' + Crypto.util.bytesToHex(sendTx.serialize());
-                        util.post('https://blockchain.info/pushtx', data).then(function () {
+                        // for (i = 0; i < selectedOuts.length; i++) {
+                        //     var hash = Crypto.util.bytesToBase64(Crypto.util.hexToBytes(selectedOuts[i].tx_hash));
+                        //     var script = new Bitcoin.Script(Crypto.util.hexToBytes(selectedOuts[i].script));
+                        //     var txin = new Bitcoin.TransactionIn({
+                        //         outpoint: {
+                        //             hash: hash,
+                        //             index: selectedOuts[i].tx_output_n
+                        //         },
+                        //         script: script,
+                        //         sequence: 4294967295
+                        //     });
+                        //     sendTx.addInput(txin);
+                        // }
+                        // // Add the send address to the transaction as the output
+                        // sendTx.addOutput(new Bitcoin.Address(sendAddress), new BigInteger('' + amount, 10));
+                        // // Add any leftover value to the transaction as an output pointing back to this wallet,
+                        // // minus the fee of course
+                        // var changeValue = availableValue.subtract(txValue);
+                        // if (changeValue.compareTo(BigInteger.ZERO) > 0) {
+                        //     sendTx.addOutput(eckey.getBitcoinAddress(), changeValue);
+                        // }
+                        // // Sign all the input hashes
+                        // var hashType = 1; // SIGHASH_ALL
+                        // for (i = 0; i < sendTx.ins.length; i++) {
+                        //     var connectedScript = sendTx.ins[i].script;
+                        //     hash = sendTx.hashTransactionForSignature(connectedScript, i, hashType);
+                        //     var signature = eckey.sign(hash);
+                        //     signature.push(parseInt(hashType, 10));
+                        //     var pubKey = eckey.getPub();
+                        //     script = new Bitcoin.Script();
+                        //     script.writeBytes(signature);
+                        //     script.writeBytes(pubKey);
+                        //     sendTx.ins[i].script = script;
+                        // }
+                        // // Push the transaction to blockchain.info
+
+                      //  var data = 'tx=' + Crypto.util.bytesToHex(sendTx.serialize());
+                         var data = JSON.stringify({'rawtx': transaction.toString()});
+                        //var data = 'rawtx='+ transaction.toString();
+                        //var insight = new explorer.Insight('https://bch-insight.bitpay.com');
+                        console.log(data);
+                        util.post('https://bch-insight.bitpay.com/api/tx/send', data).then(function () {
                             // Notify the balance listener of the changed amount immediately,
                             // but don't set the balance since the transaction will be processed by the websocket
                             if (balanceListener) balanceListener(balance - amount - fee);
@@ -379,6 +436,9 @@
                         }, function () {
                             reject(Error('Unknown error'));
                         });
+
+
+
                     }
                 }, function () {
                     reject(Error('Unknown error'));

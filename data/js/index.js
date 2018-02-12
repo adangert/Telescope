@@ -107,15 +107,18 @@ $(document).ready(function () {
 
         var regex = /^[13][1-9A-HJ-NP-Za-km-z]{26,33}$/;
         var validAddress = true;
-        if (!regex.test(String(address))) {
+        // if (!regex.test(String(address))) {
+        //     console.log("REGEX");
+        //     validAddress = false;
+        // } else {
+        try {
+            new bch.Address.fromString(address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
+            //new Bitcoin.Address(address);
+        } catch (e) {
+          console.log("NO");
             validAddress = false;
-        } else {
-            try {
-                new Bitcoin.Address(address);
-            } catch (e) {
-                validAddress = false;
-            }
         }
+        //}
 
         if (validAddress) {
             $('#addressAlert').slideUp();
