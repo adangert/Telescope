@@ -1,7 +1,6 @@
 {
     "manifest_version": 2,
-
-    "name": "WebTipper Bitcoin Cash Wallet",
+    "name": "Bitcoin Cash Wallet",
     "author": "Aaron Angert",
     "description": "Bitcoin cash wallet in the browser. Send and receive instantly on any web page.",
     "version": "1.0",
@@ -51,5 +50,11 @@
         },
         "default_title": "WebTipper",
         "default_popup": "data/index.html"
+    },
+    "applications": {
+        "gecko": {
+        "id": "@BitcoinCashWallet",
+        "strict_min_version": "48.0a1"
+        }
     }
 }

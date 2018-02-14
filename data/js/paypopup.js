@@ -38,8 +38,11 @@ $(document).ready(function () {
             if (port) {
                 port.disconnect();
             }
+            console.log("doing the thing on context");
             port = chrome.runtime.connect();
             port.onMessage.addListener(function(response) {
+                console.log("WHAT NOW MAN");
+                console.log(response);
                 var rect = null;
                 if (response.address) {
                     // We only have an address in Chrome if it was selected by right clicking,
@@ -75,9 +78,9 @@ $(document).ready(function () {
         console.log(href);
 
         // Regex test for bitcoin pay link
-        if (/(bitcoincash:)?[0-9a-z]{38,46}/.test(href)) {
+        if (/(bitcoincash:)?q[0-9a-z]{38,46}/.test(href)) {
             console.log("IT IS BITCOIN CASH");
-            var addresses = href.match(/(bitcoincash:)?[0-9a-z]{38,46}/);
+            var addresses = href.match(/(bitcoincash:)?q[0-9a-z]{38,46}/);
             console.log(addresses)
             var address = null;
             if (addresses) {
@@ -135,7 +138,7 @@ $(document).ready(function () {
             });
 
             // Check if the address is actually valid
-            if (!address || !/^(bitcoincash:)?[0-9a-z]{38,46}$/.test(String(address))) {
+            if (!address || !/^(bitcoincash:)?q[0-9a-z]{38,46}$/.test(String(address))) {
                 address = null;
             } else {
                 try {
@@ -206,7 +209,7 @@ $(document).ready(function () {
                 var newAddress;
                 if (!address) {
                     newAddress = $iframe.find('#address').val();
-                    if (!/^(bitcoincash:)?[0-9a-z]{38,46}$/.test(String(newAddress))) {
+                    if (!/^(bitcoincash:)?q[0-9a-z]{38,46}$/.test(String(newAddress))) {
                         validAddress = false;
                     } else {
                         try {

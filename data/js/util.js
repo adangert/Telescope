@@ -77,7 +77,9 @@
             iframe.setAttribute('style', 'background-color: transparent; position: absolute; z-index: 2147483647; border: 0px;');
             iframe.setAttribute('allowtransparency', 'true');
             iframe.frameBorder = '0';
+            //if (false) {
             if (typeof chrome !== 'undefined') {
+                console.log("doing chrome iframe");
                 // For Chrome get the HTML content with an ajax call and write it into the document
                 iframe.src = 'about:blank';
                 var request = new XMLHttpRequest();
@@ -91,6 +93,7 @@
                 iframe.contentWindow.document.close();
                 resolve(iframe);
             } else {
+                console.log("trying firefox iframe");
                 // For Firefox get the encoded HTML and set it to the iFrame's src
                 ret.message('html', src).then(function (url) {
                     iframe.src = url;

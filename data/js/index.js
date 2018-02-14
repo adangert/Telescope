@@ -18,7 +18,7 @@ $(document).ready(function () {
         req.open('GET', 'https://bch-insight.bitpay.com/api/utils/estimatefee/',false);
         req.send(null);
         console.log(req.status);
-        //var FEE = SATOSHIS * .0001;
+        // var FEE = SATOSHIS * .0001;
         var FEE = Math.round(SATOSHIS * JSON.parse(req.response)[2]);
 
 
@@ -40,6 +40,7 @@ $(document).ready(function () {
 
 
     function setupWallet() {
+        console.log("SETTING UP WALLET");
         wallet.restoreAddress().then(setQRCodes,
             function () {
                 return wallet.generateAddress();
@@ -49,6 +50,7 @@ $(document).ready(function () {
             });
 
         function setQRCodes() {
+            console.log("GON SET THOSE QR CODES");
             $('#qrcode').html(createQRCodeCanvas(wallet.getAddress()));
             $('#textAddress').text(wallet.getOldAddress());
         }
@@ -128,7 +130,7 @@ $(document).ready(function () {
             $('#amountAlert').slideDown();
         }
 
-        var regex = /^(bitcoincash:)?[0-9a-z]{38,46}$/;
+        var regex = /^(bitcoincash:)?q[0-9a-z]{38,46}$/;
         var validAddress = true;
         if (!regex.test(String(address))) {
             console.log("REGEX");

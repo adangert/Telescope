@@ -13,6 +13,7 @@
     // Save port to communicate with content scripts
     var responsePort = null;
     chrome.runtime.onConnect.addListener(function(port) {
+        console.log("onConnect listener");
         responsePort = port;
     });
 
@@ -20,7 +21,7 @@
     chrome.contextMenus.create({'title': 'Pay %s', 'contexts': ['selection'], 'onclick': menuOnClick});
     chrome.contextMenus.create({'title': 'Send BCH', 'contexts': ['page'], 'onclick': menuOnClick});
     function menuOnClick(info) {
-        console.log("menuOnClick");
+        console.log(info);
         if (info.selectionText) {
             responsePort.postMessage({'address': info.selectionText});
         } else {
