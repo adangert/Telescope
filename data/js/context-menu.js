@@ -9,6 +9,7 @@
  */
 
 (function () {
+  console.log("CONTEXT PAGE");
 
     var address = null,
         rect = null;
@@ -17,17 +18,25 @@
     self.on('context', function (node) {
         address = null;
         rect = null;
-        // Send null address to reset label to 'Send BTC'
+        // Send null address to reset label to 'Send BCH'
         self.postMessage({address:address});
         // If we're a text node we check if it contains a bitcoin address
         if (node.children.length == 0 && node['textContent']) {
             var text = node['textContent'];
-            var matches = text.match(/[13][1-9A-HJ-NP-Za-km-z]{26,33}/);
+            var matches = text.match(/(bitcoincash:)?[1-9a-z]{38,46}/);
             if (matches) {
                 try {
-                    new Bitcoin.Address(matches[0]);
+                    address = '';
+                    if (matches[0].indexOf("bitcoincash:") == -1){
+                      address = 'bitcoincash:'+matches[0];
+                    }else{
+                      address = matches[0];
+                    }
+
+                    new bch.Address.fromString(address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
+                    //new Bitcoin.Address(matches[0]);
                     // If we get here we have a valid bitcoin address somewhere in the right clicked node
-                    address = matches[0];
+                    //address = matches[0];
                     // Sending the address back changes text to 'Pay <address>'
                     self.postMessage({address:address});
                     // Wrap address with a unique span so we can determine the exact position
@@ -50,6 +59,7 @@
 
     // Event received when the context menu item is clicked
     self.on('click', function () {
+        console.log("this is the click");
         var object = {clicked:true, address:address};
         // If an address was clicked, rect will be the position of the address so send it
         if (rect) {

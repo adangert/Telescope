@@ -12,10 +12,33 @@ $(document).ready(function () {
     // Setup the wallet, page values and callbacks
     var val = '',
         address = '',
-        SATOSHIS = 100000000,
-        FEE = SATOSHIS * .0001,
-        BTCUnits = 'BTC',
-        BTCMultiplier = SATOSHIS;
+        SATOSHIS = 100000000;
+
+        var req = new XMLHttpRequest();
+        req.open('GET', 'https://bch-insight.bitpay.com/api/utils/estimatefee/',false);
+        req.send(null);
+        console.log(req.status);
+        //var FEE = SATOSHIS * .0001;
+        var FEE = Math.round(SATOSHIS * JSON.parse(req.response)[2]);
+
+
+  //       util.get('https://bch-insight.bitpay.com/api/utils/estimatefee').then(function (response) {
+  //
+  //
+  // // successMessage is whatever we passed in the resolve(...) function above.
+  // // It doesn't have to be a string, but if it is only a succeed message, it probably will be.
+  //       console.log("Yay! " + response);
+  //       console.log(JSON.parse(response)[2]);
+  //       FEE = JSON.parse(response)[2];
+  //       console.log(response);
+  //       });
+        var BCHUnits = 'BCH',
+        BCHMultiplier = SATOSHIS;
+        console.log("WHAT");
+        console.log(FEE);
+        console.log("NOW");
+
+
     function setupWallet() {
         wallet.restoreAddress().then(setQRCodes,
             function () {
@@ -36,7 +59,7 @@ $(document).ready(function () {
     setupWallet();
 
     $('#amount').on('keyup change', function () {
-        val = Math.floor(Number($(this).val() * BTCMultiplier));
+        val = Math.floor(Number($(this).val() * BCHMultiplier));
         if (val > 0) {
             currencyManager.formatAmount(val).then(function (formattedMoney) {
                 var text = 'Amount: ' + formattedMoney;
@@ -47,28 +70,28 @@ $(document).ready(function () {
         }
     });
 
-    function setBTCUnits(units) {
-        BTCUnits = units;
-        if (units === 'µBTC') {
-            BTCMultiplier = SATOSHIS / 1000000;
-        } else if (units === 'mBTC') {
-            BTCMultiplier = SATOSHIS / 1000;
+    function setBCHUnits(units) {
+        BCHUnits = units;
+        if (units === 'µBCH') {
+            BCHMultiplier = SATOSHIS / 1000000;
+        } else if (units === 'mBCH') {
+            BCHMultiplier = SATOSHIS / 1000;
         } else {
-            BTCMultiplier = SATOSHIS;
+            BCHMultiplier = SATOSHIS;
         }
 
         setBalance(wallet.getBalance());
-        $('#sendUnit').html(BTCUnits);
-        $('#amount').attr('placeholder', '(Plus ' + FEE / BTCMultiplier + ' ' + BTCUnits + ' fee)').attr('step', 100000 / BTCMultiplier).val(null);
+        $('#sendUnit').html(BCHUnits);
+        $('#amount').attr('placeholder', '(Plus ' + FEE / BCHMultiplier + ' ' + BCHUnits + ' fee)').attr('step', 100000 / BCHMultiplier).val(null);
         $('#amountLabel').text('Amount:');
     }
-    preferences.getBTCUnits().then(setBTCUnits);
+    preferences.getBCHUnits().then(setBCHUnits);
 
     function setBalance(balance) {
         if (Number(balance) < 0 || isNaN(balance)) {
             balance = 0;
         }
-        $('#balance').text(balance / BTCMultiplier + ' ' + BTCUnits);
+        $('#balance').text(balance / BCHMultiplier + ' ' + BCHUnits);
     }
 
     $('#successAlertClose').click(function () {
@@ -87,10 +110,10 @@ $(document).ready(function () {
     }
 
     /*
-     *  Send BTC
+     *  Send BCH
      */
     $('#sendButton').click(function () {
-        val = Math.floor(Number($('#amount').val() * BTCMultiplier));
+        val = Math.floor(Number($('#amount').val() * BCHMultiplier));
         address = $('#sendAddress').val();
         var balance = wallet.getBalance();
         var validAmount = true;
@@ -105,20 +128,26 @@ $(document).ready(function () {
             $('#amountAlert').slideDown();
         }
 
-        var regex = /^[13][1-9A-HJ-NP-Za-km-z]{26,33}$/;
+        var regex = /^(bitcoincash:)?[0-9a-z]{38,46}$/;
         var validAddress = true;
-        // if (!regex.test(String(address))) {
-        //     console.log("REGEX");
-        //     validAddress = false;
-        // } else {
+        if (!regex.test(String(address))) {
+            console.log("REGEX");
+            validAddress = false;
+        } else {
         try {
-            new bch.Address.fromString(address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
+            var new_address = '';
+            if (address.indexOf("bitcoincash:") == -1){
+              new_address = 'bitcoincash:'+address;
+            }else{
+              new_address = address;
+            }
+            new bch.Address.fromString(new_address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
             //new Bitcoin.Address(address);
         } catch (e) {
           console.log("NO");
             validAddress = false;
         }
-        //}
+        }
 
         if (validAddress) {
             $('#addressAlert').slideUp();
@@ -129,7 +158,7 @@ $(document).ready(function () {
         if (validAddress && validAmount) {
             if (wallet.isEncrypted()) {
                 currencyManager.formatAmount(val).then(function (formattedMoney) {
-                    var text = 'Are you sure you want to send<br />' + val / BTCMultiplier + ' ' + BTCUnits + ' (<strong>' + formattedMoney + '</strong>)<br />to ' + address + ' ?';
+                    var text = 'Are you sure you want to send<br />' + val / BCHMultiplier + ' ' + BCHUnits + ' (<strong>' + formattedMoney + '</strong>)<br />to ' + address + ' ?';
                     $('#sendConfirmationText').html(text);
                     $('#sendConfirmationPassword').val(null);
                     $('#sendConfirmationPasswordIncorrect').hide();
@@ -152,7 +181,7 @@ $(document).ready(function () {
             $('#amount').val(null);
             $('#sendAddress').val(null);
             $('#amountLabel').text('Amount:');
-            var text = 'Sent ' + val / BTCMultiplier + ' ' + BTCUnits + ' to ' + address + '.';
+            var text = 'Sent ' + val / BCHMultiplier + ' ' + BCHUnits + ' to ' + address + '.';
             $('#successAlertLabel').text(text);
             $('#successAlert').slideDown();
             $('#sendConfirmationModal').modal('hide');
@@ -275,8 +304,8 @@ $(document).ready(function () {
      * Units selection
      */
     $('#setUnits').click(function () {
-        preferences.getBTCUnits().then(function (units) {
-            var availableUnits = ['BTC', 'mBTC', 'µBTC'];
+        preferences.getBCHUnits().then(function (units) {
+            var availableUnits = ['BCH', 'mBCH', 'µBCH'];
             var tableBody = '<tr>';
             for (var i = 0; i < availableUnits.length; i++) {
                 tableBody += '<td><div class="radio no-padding"><label><input type="radio" name="' + availableUnits[i] + '"';
@@ -291,8 +320,8 @@ $(document).ready(function () {
             $('.radio').click(function () {
                 var units = $.trim($(this).text());
                 $('input:radio[name=' + units + ']').attr('checked', 'checked');
-                setBTCUnits(units);
-                preferences.setBTCUnits(units).then(function () {
+                setBCHUnits(units);
+                preferences.setBCHUnits(units).then(function () {
                     $('#successAlertLabel').text('Units set to ' + units + '.');
                     $('#successAlert').show();
                     $('#setCurrencyModal').modal('hide');

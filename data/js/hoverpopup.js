@@ -9,6 +9,7 @@
  */
 
 $(document).ready(function () {
+    console.log("RECURSIVE WALK");
     // Recursively walk through the childs, and push text nodes in the list
     var textNodes = [];
     (function recursiveWalk(node) {
@@ -27,17 +28,29 @@ $(document).ready(function () {
 
     // Check all text nodes for addresses
     for (var i = textNodes.length-1; i>=0; i--) {
-        var matches = textNodes[i]['textContent'].match(/[13][1-9A-HJ-NP-Za-km-z]{26,33}/g);
+        console.log("DOING MccATCHES");
+        var matches = textNodes[i]['textContent'].match(/(bitcoincash:)?[0-9a-z]{38,46}/g);
         if (matches) {
+          console.log(matches);
             var text = textNodes[i]['textContent'],
                 hasMatch = false;
             for (var j = 0; j < matches.length; j++) {
                 try {
-                    new Bitcoin.Address(matches[j]);
+                    var new_address = '';
+                    if (matches[j].indexOf("bitcoincash:") == -1){
+                      new_address = 'bitcoincash:'+matches[j];
+                    }else{
+                      new_address = matches[j];
+                    }
+
+                    new bch.Address.fromString(new_address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
+                    //new Bitcoin.Address(matches[j]);
                     // If we're here, then this node has a valid address
                     hasMatch = true;
                     // Wrap the address in the 'bitcoin-address' class
-                    text = text.replace(matches[j], '<span class="bitcoin-address">' + matches[j] + '</span>');
+                    //text = text.replace(matches[j], '<span class="bitcoin-address">' + matches[j] + '</span>');
+                    text = text.replace(matches[j], '<span class="bitcoin-address"><a href="'+matches[j]+'">' + matches[j] + '</a></span>');
+                    //text = text.replace(matches[j], 'oooompa');
                 } catch (e) {}
             }
             if (hasMatch) {
@@ -56,6 +69,7 @@ $(document).ready(function () {
     var openPopups = {};
     // Open the address when we hover on a 'bitcoin-address' wrapped element
     $('.bitcoin-address').hover(function () {
+        //console.log("BITCOIN HOVER ADDRESS");
         var address = $(this).text();
         var rect = this.getBoundingClientRect();
         if (!openPopups[address]) {
@@ -69,8 +83,8 @@ $(document).ready(function () {
                 iframe.style.top = Number(rect.top) + Number(window.pageYOffset) - height + 'px';
                 var $iframe = $(iframe.contentWindow.document);
                 $iframe.find('#main').fadeIn('fast');
-                util.getJSON('https://blockchain.info/address/' + address + '?format=json&limit=0').then(function (json) {
-                    return Promise.all([currencyManager.formatAmount(json.total_received), currencyManager.formatAmount(json.final_balance)]);
+                util.getJSON('https://bch-insight.bitpay.com/api/addr/' + address + '?noTxList=1&nocache='+ new Date().getTime()).then(function (json) {
+                    return Promise.all([currencyManager.formatAmount(json.totalReceivedSat), currencyManager.formatAmount(json.balanceSat)]);
                 }).then(function (amounts) {
                     $iframe.find('#progress').fadeOut('fast', function () {
                         $iframe.find('#received').fadeIn('fast').html('Total received: <span class="pull-right">' + amounts[0] + '</span>');
@@ -82,7 +96,7 @@ $(document).ready(function () {
                     if (typeof chrome !== 'undefined') {
                         chrome.runtime.sendMessage({address: address})
                     } else {
-                        self.port.emit('openTab', 'https://blockchain.info/address/' + address);
+                        self.port.emit('openTab', 'https://bch-insight.bitpay.com/address/' + address);
                     }
                 });
                 $iframe.find('#closeButton').click(function () {

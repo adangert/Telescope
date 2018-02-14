@@ -18,8 +18,9 @@
 
     // Create context menus
     chrome.contextMenus.create({'title': 'Pay %s', 'contexts': ['selection'], 'onclick': menuOnClick});
-    chrome.contextMenus.create({'title': 'Send BTC', 'contexts': ['page'], 'onclick': menuOnClick});
+    chrome.contextMenus.create({'title': 'Send BCH', 'contexts': ['page'], 'onclick': menuOnClick});
     function menuOnClick(info) {
+        console.log("menuOnClick");
         if (info.selectionText) {
             responsePort.postMessage({'address': info.selectionText});
         } else {
@@ -30,7 +31,8 @@
     // Open new tabs
     chrome.runtime.onMessage.addListener(function (request) {
         if (request.address) {
-            chrome.tabs.create({url: 'https://blockchain.info/address/' + request.address});
+            console.log("request address");
+            chrome.tabs.create({url: 'https://bch-insight.bitpay.com/address/' + request.address});
         }
     });
 

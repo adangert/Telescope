@@ -188,7 +188,7 @@
                 util.get('https://bch-insight.bitpay.com/api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime()).then(function (response) {
                     console.log("MMMNONONO");
                     var json = JSON.parse(response);
-                    balance = json["balanceSat"] + json["unconfirmedBalanceSat"];
+                    balance = json["balanceSat"];// + json["unconfirmedBalanceSat"];
                     console.log('https://bch-insight.bitpay.com/api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime() )
 
                     console.log(response);
@@ -331,7 +331,6 @@
                         console.log(availableValue);
 
                         var new_address = '';
-
                         if (inputs[i].address.indexOf("bitcoincash:") == -1){
                           new_address = 'bitcoincash:'+inputs[i].address;
                         }else{

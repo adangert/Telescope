@@ -16,7 +16,7 @@
         IS_ENCRYPTED = "wallet.is_encrypted",
         LAST_BALANCE = "wallet.last_balance",
         EXCHANGE_RATE = 'wallet.exchange_rate',
-        BTC_UNITS = 'wallet.btc_units',
+        BCH_UNITS = 'wallet.bch_units',
         CURRENCY = 'wallet.currency',
         preferences = function() {};
 
@@ -31,7 +31,7 @@
                 object[IS_ENCRYPTED] = false;
                 object[LAST_BALANCE] = 0;
                 object[EXCHANGE_RATE] = 0;
-                object[BTC_UNITS] = 'BTC';
+                object[BCH_UNITS] = 'BCH';
                 object[CURRENCY] = 'USD';
                 chrome.storage.sync.get(object, resolve);
             } else {
@@ -43,7 +43,7 @@
                         message[IS_ENCRYPTED] = false;
                         message[LAST_BALANCE] = 0;
                         message[EXCHANGE_RATE] = 0;
-                        message[BTC_UNITS] = 'BTC';
+                        message[BCH_UNITS] = 'BCH';
                         message[CURRENCY] = 'USD';
                         return util.message('save', message);
                     } else {
@@ -59,7 +59,7 @@
     function get(pref) {
         return function () {
             return sync().then(function (values) {
-                console.log(values[pref]);
+                //console.log(values[pref]);
                 return values[pref];
             });
         };
@@ -110,9 +110,9 @@
             return set(EXCHANGE_RATE, exchangeRate);
         },
 
-        getBTCUnits: get(BTC_UNITS),
-        setBTCUnits: function (btcUnits) {
-            return set(BTC_UNITS, btcUnits);
+        getBCHUnits: get(BCH_UNITS),
+        setBCHUnits: function (bchUnits) {
+            return set(BCH_UNITS, bchUnits);
         },
 
         getCurrency: get(CURRENCY),

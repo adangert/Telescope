@@ -25,7 +25,7 @@
 <div id="main" class="container">
     <div id="send" class="row panel panel-primary">
         <div class="panel-heading">
-            Send BTC
+            Send BCH
             <div class="btn-group">
                 <button type="button" id="settingsButton" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown">
                     <span class="glyphicon glyphicon-wrench"></span>
@@ -33,7 +33,7 @@
                 <ul id="settingsMenu" class="dropdown-menu">
                     <li><a id="setPassword">Set Password/Encrypt</a></li>
                     <li><a id="setCurrency">Set Currency</a></li>
-                    <li><a id="setUnits">Set BTC Units</a></li>
+                    <li><a id="setUnits">Set BCH Units</a></li>
                     <li class="divider">
                     <li><a id="showPrivateKey">Show Private Key</a></li>
                     <li><a id="importPrivateKey">Import Private Key</a></li>
@@ -64,15 +64,15 @@
                 Amount must be greater than zero and less than your balance.
             </div>
             <div class="input-group">
-                <input type="number" min="0" step="0.001" class="form-control" id="amount" placeholder="(incl. 0.0001 BTC fee)">
-                <span id="sendUnit" class="input-group-addon">BTC</span>
+                <input type="number" min="0" step="0.001" class="form-control" id="amount" placeholder="(incl. 0.00001 BCH fee)">
+                <span id="sendUnit" class="input-group-addon">BCH</span>
                 <div class="input-group-btn">
                     <button id="sendButton" type="submit" class="btn btn-primary">Send</button>
                 </div>
             </div>
         </div>
         <div class="panel-footer">
-            Balance: <span id="balance">0 BTC</span>
+            Balance: <span id="balance">0 BCH</span>
             <button type="button" id="addressPopover" class="btn btn-default" data-toggle="modal" data-target="#receiveModal">
                 Address&nbsp;&nbsp;<span class="glyphicon glyphicon-qrcode"></span>
             </button>
@@ -134,7 +134,7 @@
             </div>
             <div class="modal-body">
                 <p>
-                    Set a password to encrypt your wallet. You will be prompted for this password whenever you try to send BTC. This does not affect receiving BTC.
+                    Set a password to encrypt your wallet. You will be prompted for this password whenever you try to send BCH. This does not affect receiving BCH.
                 </p>
                 <div class="alert alert-warning">
                     <strong>Warning!</strong> This password is not stored anywhere, and is not recoverable. If you lose your password your balance will be lost.

@@ -10,16 +10,25 @@
  */
 
 $(document).ready(function () {
+    console.log("READY FREDDY");
     var SATOSHIS = 100000000,
-    FEE = SATOSHIS * .0001,
-    BTCUnits = 'BTC',
-    BTCMultiplier = SATOSHIS,
+    //FEE = SATOSHIS * .0001,
+    BCHUnits = 'BCH',
+    BCHMultiplier = SATOSHIS,
     clickX,
     clickY,
     port = null;
 
+    var req = new XMLHttpRequest();
+    req.open('GET', 'https://bch-insight.bitpay.com/api/utils/estimatefee/', false);
+    req.send(null);
+    //console.log(req.status);
+    //var FEE = SATOSHIS * .0001;
+    var FEE = Math.round(SATOSHIS * JSON.parse(req.response)[2]);
+
     // Event is broadcast when context menu is opened on the page
     $(document).on('contextmenu', function (e) {
+        console.log("on context menu");
         // Save the position of the right click to use for positioning the popup
         clickX = e.clientX;
         clickY = e.clientY;
@@ -61,10 +70,15 @@ $(document).ready(function () {
 
     // Intercept all anchor clicks and determine if they are bitcoin pay links
     $('body').on('click', 'a', function (e) {
+        console.log("TESTING HYPERLINK");
         var href = $(this).attr('href');
+        console.log(href);
+
         // Regex test for bitcoin pay link
-        if (/^bitcoin:[13][1-9A-HJ-NP-Za-km-z]{26,33}/.test(href)) {
-            var addresses = href.match(/[13][1-9A-HJ-NP-Za-km-z]{26,33}/);
+        if (/(bitcoincash:)?[0-9a-z]{38,46}/.test(href)) {
+            console.log("IT IS BITCOIN CASH");
+            var addresses = href.match(/(bitcoincash:)?[0-9a-z]{38,46}/);
+            console.log(addresses)
             var address = null;
             if (addresses) {
                 address = addresses[0];
@@ -108,24 +122,34 @@ $(document).ready(function () {
                 wallet.generateAddress();
             });
 
-            preferences.getBTCUnits().then(function (units) {
-                BTCUnits = units;
-                if (units === 'µBTC') {
-                    BTCMultiplier = SATOSHIS / 1000000;
-                } else if (units === 'mBTC') {
-                    BTCMultiplier = SATOSHIS / 1000;
+            preferences.getBCHUnits().then(function (units) {
+                BCHUnits = units;
+                if (units === 'µBCH') {
+                    BCHMultiplier = SATOSHIS / 1000000;
+                } else if (units === 'mBCH') {
+                    BCHMultiplier = SATOSHIS / 1000;
                 } else {
-                    BTCMultiplier = SATOSHIS;
+                    BCHMultiplier = SATOSHIS;
                 }
-                $iframe.find('#amount').attr('placeholder', 'Amount (' + BTCUnits + ')').attr('step', 100000 / BTCMultiplier);
+                $iframe.find('#amount').attr('placeholder', 'Amount (' + BCHUnits + ')').attr('step', 100000 / BCHMultiplier);
             });
 
             // Check if the address is actually valid
-            if (!address || !/^[13][1-9A-HJ-NP-Za-km-z]{26,33}$/.test(String(address))) {
+            if (!address || !/^(bitcoincash:)?[0-9a-z]{38,46}$/.test(String(address))) {
                 address = null;
             } else {
                 try {
-                    new Bitcoin.Address(address);
+
+                  var new_address = '';
+                  if (address.indexOf("bitcoincash:") == -1){
+                    new_address = 'bitcoincash:'+address;
+                  }else{
+                    new_address = address;
+                  }
+
+                  new bch.Address.fromString(new_address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
+
+                    //new Bitcoin.Address(address);
                 } catch (e) {
                     address = null;
                 }
@@ -145,7 +169,7 @@ $(document).ready(function () {
                 updateButton(amount);
             } else {
                 $iframe.find('#amount').on('keyup change', function () {
-                    var value = Math.floor(Number($iframe.find('#amount').val() * BTCMultiplier));
+                    var value = Math.floor(Number($iframe.find('#amount').val() * BCHMultiplier));
                     updateButton(value);
                 });
             }
@@ -163,11 +187,12 @@ $(document).ready(function () {
             $iframe.find('#main').fadeIn('fast');
 
             $iframe.find('#button').click(function () {
+              console.log("DO THE BUTTON THING");
                 var validAmount = true,
                     validAddress = true,
                     newAmount;
                 if (!amount) {
-                    newAmount = Math.floor(Number($iframe.find('#amount').val() * BTCMultiplier));
+                    newAmount = Math.floor(Number($iframe.find('#amount').val() * BCHMultiplier));
                 } else {
                     newAmount = amount;
                 }
@@ -181,11 +206,21 @@ $(document).ready(function () {
                 var newAddress;
                 if (!address) {
                     newAddress = $iframe.find('#address').val();
-                    if (!/^[13][1-9A-HJ-NP-Za-km-z]{26,33}$/.test(String(newAddress))) {
+                    if (!/^(bitcoincash:)?[0-9a-z]{38,46}$/.test(String(newAddress))) {
                         validAddress = false;
                     } else {
                         try {
-                            new Bitcoin.Address(newAddress);
+
+                          var new_address = '';
+                          if (newAddress.indexOf("bitcoincash:") == -1){
+                            new_address = 'bitcoincash:'+newAddress;
+                          }else{
+                            new_address = newAddress;
+                          }
+
+                          new bch.Address.fromString(new_address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
+
+                            //new Bitcoin.Address(newAddress);
                         } catch (e) {
                             validAddress = false;
                         }
