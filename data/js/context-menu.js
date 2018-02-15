@@ -10,7 +10,6 @@
  */
 
 (function () {
-  console.log("CONTEXT PAGE");
 
     var address = null,
         rect = null;
@@ -60,7 +59,6 @@
 
     // Event received when the context menu item is clicked
     self.on('click', function () {
-        console.log("this is the click");
         var object = {clicked:true, address:address};
         // If an address was clicked, rect will be the position of the address so send it
         if (rect) {

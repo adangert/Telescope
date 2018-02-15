@@ -60,7 +60,6 @@
     function get(pref) {
         return function () {
             return sync().then(function (values) {
-                //console.log(values[pref]);
                 return values[pref];
             });
         };

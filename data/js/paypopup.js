@@ -11,7 +11,6 @@
  */
 
 $(document).ready(function () {
-    console.log("READY FREDDY");
     var SATOSHIS = 100000000,
     //FEE = SATOSHIS * .0001,
     BCHUnits = 'BCH',
@@ -23,13 +22,11 @@ $(document).ready(function () {
     var req = new XMLHttpRequest();
     req.open('GET', 'https://blockdozer.com/insight-api/utils/estimatefee/', false);
     req.send(null);
-    //console.log(req.status);
     //var FEE = SATOSHIS * .0001;
     var FEE = Math.round(SATOSHIS * JSON.parse(req.response)[2]);
 
     // Event is broadcast when context menu is opened on the page
     $(document).on('contextmenu', function (e) {
-        console.log("on context menu");
         // Save the position of the right click to use for positioning the popup
         clickX = e.clientX;
         clickY = e.clientY;
@@ -39,11 +36,8 @@ $(document).ready(function () {
             if (port) {
                 port.disconnect();
             }
-            console.log("doing the thing on context");
             port = chrome.runtime.connect();
             port.onMessage.addListener(function(response) {
-                console.log("WHAT NOW MAN");
-                console.log(response);
                 var rect = null;
                 if (response.address) {
                     // We only have an address in Chrome if it was selected by right clicking,
@@ -74,15 +68,11 @@ $(document).ready(function () {
 
     // Intercept all anchor clicks and determine if they are bitcoin pay links
     $('body').on('click', 'a', function (e) {
-        console.log("TESTING HYPERLINK");
         var href = $(this).attr('href');
-        console.log(href);
 
         // Regex test for bitcoin pay link
         if (/(bitcoincash:)?q[0-9a-z]{38,46}/.test(href)) {
-            console.log("IT IS BITCOIN CASH");
             var addresses = href.match(/(bitcoincash:)?q[0-9a-z]{38,46}/);
-            console.log(addresses)
             var address = null;
             if (addresses) {
                 address = addresses[0];
@@ -189,7 +179,6 @@ $(document).ready(function () {
             $iframe.find('#main').fadeIn('fast');
 
             $iframe.find('#button').click(function () {
-              console.log("DO THE BUTTON THING");
                 var validAmount = true,
                     validAddress = true,
                     newAmount;

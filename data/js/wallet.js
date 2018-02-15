@@ -1,6 +1,7 @@
 /**
  * wallet.js
- * Copyright (c) 2014 Andrew Toth
+ * Copyright (c) 2018- Aaron Angert
+ * Copyright (c) 2014-2018 Andrew Toth
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the MIT license.
@@ -44,18 +45,14 @@
 
         // Create a new address
         generateAddress: function (password) {
-            console.log("gen new address");
             return new Promise(function (resolve, reject) {
                 if (ret.validatePassword(password)) {
                     var pair = new bch.PrivateKey()
                     var privkey = pair.toString();
                     //address = privateKey.toAddress().toString();
-                    console.log(privkey);
                     //var eckey = new Bitcoin.ECKey(false);
-                    console.log("privateKey");
                     if (isEncrypted) {
                         if (typeof chrome !== 'undefined') {
-                            console.log(privateKey);
                             privateKey = CryptoJS.AES.encrypt(privkey, password);
                         } else {
                             privateKey = JSON.parse(CryptoJS.AES.encrypt(privkey, password, {format:jsonFormatter}));
@@ -63,11 +60,9 @@
                     } else {
                         privateKey = privkey;
                     }
-                    console.log("oldy");
                     old_address = pair.toAddress().toString();
 
                     address = pair.toAddress().toString(bch.Address.CashAddrFormat);
-                    console.log("barance");
                     balance = 0;
                     Promise.all([preferences.setAddress(address), preferences.setOldAddress(old_address), preferences.setPrivateKey(privateKey), preferences.setIsEncrypted(isEncrypted)]).then(function () {
                         updateBalance()
@@ -99,14 +94,11 @@
 
         // Import an address using a private key
         importAddress: function (password, _privateKey) {
-          console.log("about to import it");
             return new Promise(function (resolve, reject) {
                 if (ret.validatePassword(password)) {
                     try {
-                      console.log("GONNA IMPORT");
                         //var eckey = new Bitcoin.ECKey(_privateKey);
                         var pair = new bch.PrivateKey(_privateKey)
-                        console.log("IMPORTED");
                         var privkey = pair.toString();
                         if (isEncrypted) {
                             if (typeof chrome !== 'undefined') {
@@ -184,16 +176,10 @@
                 balance = result;
                 if (balanceListener) balanceListener(balance);
                 // Check blockchain.info for the current balance
-                console.log("WOWOWOWO");
                 util.get('https://blockdozer.com/insight-api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime()).then(function (response) {
-                    console.log("MMMNONONO");
                     var json = JSON.parse(response);
                     balance = json["balanceSat"] + json["unconfirmedBalanceSat"];
-                    console.log('https://blockdozer.com/insight-api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime() )
 
-                    console.log(response);
-                    console.log(json["addrStr"]);
-                    console.log(balance);
                     return preferences.setLastBalance(balance);
                 }).then(function () {
                     //web sockets currently not functional
@@ -208,7 +194,6 @@
                     //   //
                     //   //var eventToListenTo = 'tx'
                     //   //var room = 'inv'
-                    //   console.log("on tothe good stuff");
                     //   var socket = io("https://bch-insight.bitpay.com");
                     //   socket.on('connect', function() {
                     //     // Join the room.
@@ -307,10 +292,7 @@
             var decryptedPrivateKey = ret.getDecryptedPrivateKey(password);
             if (decryptedPrivateKey) {
                 // Get all unspent outputs from blockchain.info to generate our inputs
-                console.log("about to get the blockdozer");
                 util.getJSON('https://blockdozer.com/insight-api/addr/' + address+'/utxo?nocache='+ new Date().getTime()).then(function (json) {
-                  console.log(json);
-                  console.log("BEEP");
                     var inputs = json,
                         selectedOuts = [];
                         //eckey = new Bitcoin.ECKey(decryptedPrivateKey),
@@ -319,18 +301,13 @@
                         var txValue = new bigInt('' + totalInt, 10);
 
                         var availableValue = bigInt.zero;
-                        console.log("BOOP");
-                        console.log(totalInt);
-                        console.log(txValue);
 
                         var utxos = [];
                     // Gather enough inputs so that their value is greater than or equal to the total cost
                     for (var i = 0; i < inputs.length; i++) {
                         if(inputs[i].confirmations >= 0){
                           selectedOuts.push(inputs[i]);
-                          console.log(inputs[i].satoshis);
                           availableValue = availableValue.add(new bigInt('' + inputs[i].satoshis, 10));
-                          console.log(availableValue);
 
                           // If we ever need to switch to the new address
                           // var new_address = '';
@@ -352,29 +329,15 @@
                           if (availableValue.compareTo(txValue) >= 0) break;
                       }
                     }
-                    console.log(utxos);
-                    console.log("HERE NOW");
-                    console.log(availableValue);
                     // If there aren't enough unspent outputs to available then we can't send the transaction
                     if (availableValue.compareTo(txValue) < 0) {
-                        console.log("WOAHHHHHH");
                         reject(Error('Insufficient funds'));
                     } else {
                         // Create the transaction
-                        console.log("making the transaction");
                         //var sendTx = new Bitcoin.Transaction();
-                        console.log("first thing first");
-                        console.log(sendAddress);
-                        console.log(address);
 
                         var legacy_address = bch.Address.fromString(address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
                         var legacy_sendaddress = bch.Address.fromString(sendAddress,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
-                        console.log(utxos)
-                        console.log(legacy_address);
-                        console.log(Number(amount));
-                        console.log(Number(fee));
-                        console.log(legacy_sendaddress);
-                        console.log(decryptedPrivateKey);
 
                         var transaction = new bch.Transaction()
                           .from(utxos) // using the last UXTO to sign the next transaction
@@ -383,8 +346,6 @@
                           .change(legacy_address)
                           .sign(decryptedPrivateKey);
 
-                        console.log("made it to the transaction");
-                        console.log(transaction);
 
 
 

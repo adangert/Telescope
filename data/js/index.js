@@ -18,7 +18,6 @@ $(document).ready(function () {
         var req = new XMLHttpRequest();
         req.open('GET', 'https://blockdozer.com/insight-api/utils/estimatefee/',false);
         req.send(null);
-        console.log(req.status);
         // var FEE = SATOSHIS * .0001;
         var FEE = Math.round(SATOSHIS * JSON.parse(req.response)[2]);
 
@@ -28,20 +27,13 @@ $(document).ready(function () {
   //
   // // successMessage is whatever we passed in the resolve(...) function above.
   // // It doesn't have to be a string, but if it is only a succeed message, it probably will be.
-  //       console.log("Yay! " + response);
-  //       console.log(JSON.parse(response)[2]);
   //       FEE = JSON.parse(response)[2];
-  //       console.log(response);
   //       });
         var BCHUnits = 'BCH',
         BCHMultiplier = SATOSHIS;
-        console.log("WHAT");
-        console.log(FEE);
-        console.log("NOW");
 
 
     function setupWallet() {
-        console.log("SETTING UP WALLET");
         wallet.restoreAddress().then(setQRCodes,
             function () {
                 return wallet.generateAddress();
@@ -51,7 +43,6 @@ $(document).ready(function () {
             });
 
         function setQRCodes() {
-            console.log("GON SET THOSE QR CODES");
             $('#qrcode').html(createQRCodeCanvas(wallet.getAddress()));
             $('#textAddress').text(wallet.getAddress());
         }
@@ -134,7 +125,6 @@ $(document).ready(function () {
         var regex = /^(bitcoincash:)?q[0-9a-z]{38,46}$/;
         var validAddress = true;
         if (!regex.test(String(address))) {
-            console.log("REGEX");
             validAddress = false;
         } else {
         try {
@@ -144,7 +134,6 @@ $(document).ready(function () {
             new bch.Address.fromString(address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
             //new Bitcoin.Address(address);
         } catch (e) {
-          console.log("NO");
             validAddress = false;
         }
         }

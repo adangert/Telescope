@@ -11,17 +11,14 @@
 //window.onload = function () { alert("It's loaded!") }
 
 $(document).ready(function () {
-    //console.log("RECURSIVE WALK");
     // Recursively walk through the childs, and push text nodes in the list
     var textNodes = [];
     (function recursiveWalk(node) {
-        //console.log(node);
         if (node) {
             node = node.firstChild;
             while (node != null) {
                 if (node.nodeType == 3) {
                     textNodes.push(node);
-                    //recursiveWalk(node);
                 } else if (node.nodeType == 1) {
                     recursiveWalk(node);
                 }
@@ -32,10 +29,8 @@ $(document).ready(function () {
 
     // Check all text nodes for addresses
     for (var i = textNodes.length-1; i>=0; i--) {
-        //console.log(textNodes[i]['textContent']);
         var matches = textNodes[i]['textContent'].match(/(bitcoincash:)?q[0-9a-z]{38,46}/g);
         if (matches) {
-          //console.log(matches);
             var text = textNodes[i]['textContent'],
                 hasMatch = false;
             for (var j = 0; j < matches.length; j++) {
@@ -73,7 +68,6 @@ $(document).ready(function () {
     var openPopups = {};
     // Open the address when we hover on a 'bitcoin-address' wrapped element
     $('.bitcoin-address').hover(function () {
-        console.log("BITCOIN HOVER ADDRESS");
         var address = $(this).text();
         if (address.indexOf("bitcoincash:") == -1){
           address = 'bitcoincash:'+address;
