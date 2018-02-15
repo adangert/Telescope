@@ -58,6 +58,7 @@
 
         // Used to send messages from content scripts to add-on scripts and return values to content scripts in Firefox add-on
         message: function (name, value) {
+          console.log("DOING MESSAGE");
             return new Promise(function (resolve) {
                 // 'self' can also be 'addon' depending on how script is injected
                 var ref = (typeof addon === 'undefined' ? self : addon);
@@ -77,8 +78,9 @@
             iframe.setAttribute('style', 'background-color: transparent; position: absolute; z-index: 2147483647; border: 0px;');
             iframe.setAttribute('allowtransparency', 'true');
             iframe.frameBorder = '0';
-            //if (false) {
-            if (typeof chrome !== 'undefined') {
+
+
+            if (navigator.userAgent.indexOf("Chrome") != -1) {
                 console.log("doing chrome iframe");
                 // For Chrome get the HTML content with an ajax call and write it into the document
                 iframe.src = 'about:blank';
@@ -91,22 +93,38 @@
                 iframe.contentWindow.document.open('text/html', 'replace');
                 iframe.contentWindow.document.write(text);
                 iframe.contentWindow.document.close();
+
+                console.log(src);
+
                 resolve(iframe);
             } else {
-                console.log("trying firefox iframe");
-                // For Firefox get the encoded HTML and set it to the iFrame's src
-                ret.message('html', src).then(function (url) {
-                    iframe.src = url;
-                    // Only way to reliably know when the frame is ready in Firefox is by polling
-                    function pollReady() {
-                        if (!iframe.contentWindow.document.getElementById('progress')) {
-                            setTimeout(pollReady, 100);
-                        } else {
-                            resolve(iframe);
-                        }
-                    }
-                    pollReady();
-                });
+
+                var fullURL = browser.extension.getURL("data/"+src);
+                console.log(fullURL);
+                iframe.src = fullURL;
+                console.log("doing chrome iframe");
+                var request = new XMLHttpRequest();
+                request.open('GET', chrome.extension.getURL('data/' + src), false);
+                request.send(null);
+                var text = request.response;
+                text = text.replace(/css\//g, chrome.extension.getURL('') + 'data/css/');
+                resolve(iframe);
+                // console.log("trying firefox iframe");
+                // // For Firefox get the encoded HTML and set it to the iFrame's src
+                // iframe.src = 'moz-extension://ff3b317a-b2d5-4e7b-acee-c90f0ad9b174/data/paypopup.html';
+                // ret.message('html', src).then(function (url) {
+                //   console.log("IN FIFFF");
+                //     iframe.src = url;
+                //     // Only way to reliably know when the frame is ready in Firefox is by polling
+                //     function pollReady() {
+                //         if (!iframe.contentWindow.document.getElementById('progress')) {
+                //             setTimeout(pollReady, 100);
+                //         } else {
+                //             resolve(iframe);
+                //         }
+                //     }
+                //     pollReady();
+                // });
             }
         });
     }
