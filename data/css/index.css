@@ -1,6 +1,6 @@
 .container {
     margin-left: 0px;
-    width: 360px;
+    width: 440px;
 }
 
 a:hover {
@@ -10,7 +10,7 @@ a:hover {
 
 body .modal-dialog {
     margin: 0px;
-    width: 360px;
+    width: 420px;
     overflow: hidden;
 }
 
@@ -19,15 +19,15 @@ body .modal-dialog {
 }
 
 #qrcode {
-    margin-left: 86px;
+    margin-left: 108px;
 }
 
 #settingsButton {
-    margin-left: 219px;
+    margin-left: 296px;
 }
 
 #settingsMenu {
-    margin-left: 76px;
+    margin-left: 115px;
 }
 
 .no-padding {

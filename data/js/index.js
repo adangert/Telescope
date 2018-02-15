@@ -1,6 +1,7 @@
 /**
  * index.js
- * Copyright (c) 2014 Andrew Toth
+ * Copyright (c) 2018- Aaron Angert
+ * Copyright (c) 2014-2018 Andrew Toth
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the MIT license.
@@ -15,7 +16,7 @@ $(document).ready(function () {
         SATOSHIS = 100000000;
 
         var req = new XMLHttpRequest();
-        req.open('GET', 'https://bch-insight.bitpay.com/api/utils/estimatefee/',false);
+        req.open('GET', 'https://blockdozer.com/insight-api/utils/estimatefee/',false);
         req.send(null);
         console.log(req.status);
         // var FEE = SATOSHIS * .0001;
@@ -52,7 +53,7 @@ $(document).ready(function () {
         function setQRCodes() {
             console.log("GON SET THOSE QR CODES");
             $('#qrcode').html(createQRCodeCanvas(wallet.getAddress()));
-            $('#textAddress').text(wallet.getOldAddress());
+            $('#textAddress').text(wallet.getAddress());
         }
     }
     wallet.setBalanceListener(function (balance) {
@@ -137,13 +138,10 @@ $(document).ready(function () {
             validAddress = false;
         } else {
         try {
-            var new_address = '';
             if (address.indexOf("bitcoincash:") == -1){
-              new_address = 'bitcoincash:'+address;
-            }else{
-              new_address = address;
+              address = 'bitcoincash:'+address;
             }
-            new bch.Address.fromString(new_address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
+            new bch.Address.fromString(address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
             //new Bitcoin.Address(address);
         } catch (e) {
           console.log("NO");

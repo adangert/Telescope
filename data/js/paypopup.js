@@ -1,6 +1,7 @@
 /**
  * paypopup.js
- * Copyright (c) 2014 Andrew Toth
+ * Copyright (c) 2018- Aaron Angert
+ * Copyright (c) 2014-2018 Andrew Toth
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the MIT license.
@@ -20,7 +21,7 @@ $(document).ready(function () {
     port = null;
 
     var req = new XMLHttpRequest();
-    req.open('GET', 'https://bch-insight.bitpay.com/api/utils/estimatefee/', false);
+    req.open('GET', 'https://blockdozer.com/insight-api/utils/estimatefee/', false);
     req.send(null);
     //console.log(req.status);
     //var FEE = SATOSHIS * .0001;
@@ -143,14 +144,12 @@ $(document).ready(function () {
             } else {
                 try {
 
-                  var new_address = '';
+                  //var new_address = '';
                   if (address.indexOf("bitcoincash:") == -1){
-                    new_address = 'bitcoincash:'+address;
-                  }else{
-                    new_address = address;
+                    address = 'bitcoincash:'+address;
                   }
 
-                  new bch.Address.fromString(new_address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
+                  new bch.Address.fromString(address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
 
                     //new Bitcoin.Address(address);
                 } catch (e) {
@@ -214,14 +213,12 @@ $(document).ready(function () {
                     } else {
                         try {
 
-                          var new_address = '';
+                          //var new_address = '';
                           if (newAddress.indexOf("bitcoincash:") == -1){
-                            new_address = 'bitcoincash:'+newAddress;
-                          }else{
-                            new_address = newAddress;
+                            newAddress = 'bitcoincash:'+newAddress;
                           }
 
-                          new bch.Address.fromString(new_address,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
+                          new bch.Address.fromString(newAddress,'livenet', 'pubkeyhash', bch.Address.CashAddrFormat);
 
                             //new Bitcoin.Address(newAddress);
                         } catch (e) {

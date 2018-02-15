@@ -1,6 +1,7 @@
 /**
  * hoverpopup.js
- * Copyright (c) 2014 Andrew Toth
+ * Copyright (c) 2018- Aaron Angert
+ * Copyright (c) 2014-2018 Andrew Toth
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the MIT license.
@@ -74,6 +75,9 @@ $(document).ready(function () {
     $('.bitcoin-address').hover(function () {
         console.log("BITCOIN HOVER ADDRESS");
         var address = $(this).text();
+        if (address.indexOf("bitcoincash:") == -1){
+          address = 'bitcoincash:'+address;
+        }
         var rect = this.getBoundingClientRect();
         if (!openPopups[address]) {
             // Cache the address
@@ -86,7 +90,7 @@ $(document).ready(function () {
                 iframe.style.top = Number(rect.top) + Number(window.pageYOffset) - height + 'px';
                 var $iframe = $(iframe.contentWindow.document);
                 $iframe.find('#main').fadeIn('fast');
-                util.getJSON('https://bch-insight.bitpay.com/api/addr/' + address + '?noTxList=1&nocache='+ new Date().getTime()).then(function (json) {
+                util.getJSON('https://blockdozer.com/insight-api/addr/' + address + '?noTxList=1&nocache='+ new Date().getTime()).then(function (json) {
                     return Promise.all([currencyManager.formatAmount(json.totalReceivedSat), currencyManager.formatAmount(json.balanceSat)]);
                 }).then(function (amounts) {
                     $iframe.find('#progress').fadeOut('fast', function () {

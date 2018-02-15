@@ -1,6 +1,7 @@
 /**
  * currency-manager.js
- * Copyright (c) 2014 Andrew Toth
+ * Copyright (c) 2018- Aaron Angert
+ * Copyright (c) 2014-2018 Andrew Toth
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the MIT license.

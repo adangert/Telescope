@@ -185,11 +185,11 @@
                 if (balanceListener) balanceListener(balance);
                 // Check blockchain.info for the current balance
                 console.log("WOWOWOWO");
-                util.get('https://bch-insight.bitpay.com/api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime()).then(function (response) {
+                util.get('https://blockdozer.com/insight-api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime()).then(function (response) {
                     console.log("MMMNONONO");
                     var json = JSON.parse(response);
-                    balance = json["balanceSat"];// + json["unconfirmedBalanceSat"];
-                    console.log('https://bch-insight.bitpay.com/api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime() )
+                    balance = json["balanceSat"] + json["unconfirmedBalanceSat"];
+                    console.log('https://blockdozer.com/insight-api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime() )
 
                     console.log(response);
                     console.log(json["addrStr"]);
@@ -307,7 +307,8 @@
             var decryptedPrivateKey = ret.getDecryptedPrivateKey(password);
             if (decryptedPrivateKey) {
                 // Get all unspent outputs from blockchain.info to generate our inputs
-                util.getJSON('https://bch-insight.bitpay.com/api/addr/' + address+'/utxo').then(function (json) {
+                console.log("about to get the blockdozer");
+                util.getJSON('https://blockdozer.com/insight-api/addr/' + address+'/utxo?nocache='+ new Date().getTime()).then(function (json) {
                   console.log(json);
                   console.log("BEEP");
                     var inputs = json,
@@ -325,28 +326,31 @@
                         var utxos = [];
                     // Gather enough inputs so that their value is greater than or equal to the total cost
                     for (var i = 0; i < inputs.length; i++) {
-                        selectedOuts.push(inputs[i]);
-                        console.log(inputs[i].satoshis);
-                        availableValue = availableValue.add(new bigInt('' + inputs[i].satoshis, 10));
-                        console.log(availableValue);
+                        if(inputs[i].confirmations >= 0){
+                          selectedOuts.push(inputs[i]);
+                          console.log(inputs[i].satoshis);
+                          availableValue = availableValue.add(new bigInt('' + inputs[i].satoshis, 10));
+                          console.log(availableValue);
 
-                        var new_address = '';
-                        if (inputs[i].address.indexOf("bitcoincash:") == -1){
-                          new_address = 'bitcoincash:'+inputs[i].address;
-                        }else{
-                          new_address = inputs[i].address;
-                        }
-
-                        legacy_utxo_address = bch.Address.fromString(new_address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
-                        var utxo = {
-                        'txId' : inputs[i].txid,
-                        'outputIndex' : inputs[i].vout,
-                        'address' : legacy_utxo_address,
-                        'script' : inputs[i].scriptPubKey,
-                        'satoshis' : inputs[i].satoshis
-                      };
-                        utxos.push(utxo);
-                        if (availableValue.compareTo(txValue) >= 0) break;
+                          // If we ever need to switch to the new address
+                          // var new_address = '';
+                          // if (inputs[i].address.indexOf("bitcoincash:") == -1){
+                          //   new_address = 'bitcoincash:'+inputs[i].address;
+                          // }else{
+                          //   new_address = inputs[i].address;
+                          // }
+                          //
+                          // legacy_utxo_address = bch.Address.fromString(new_address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
+                          var utxo = {
+                          'txId' : inputs[i].txid,
+                          'outputIndex' : inputs[i].vout,
+                          'address' : inputs[i].address,
+                          'script' : inputs[i].scriptPubKey,
+                          'satoshis' : inputs[i].satoshis
+                        };
+                          utxos.push(utxo);
+                          if (availableValue.compareTo(txValue) >= 0) break;
+                      }
                     }
                     console.log(utxos);
                     console.log("HERE NOW");
@@ -426,8 +430,9 @@
                          var data = JSON.stringify({'rawtx': transaction.toString()});
                         //var data = 'rawtx='+ transaction.toString();
                         //var insight = new explorer.Insight('https://bch-insight.bitpay.com');
+                        console.log(transaction.toString());
                         console.log(data);
-                        util.post('https://bch-insight.bitpay.com/api/tx/send', data).then(function () {
+                        util.post('https://blockdozer.com/insight-api/tx/send', data).then(function () {
                             // Notify the balance listener of the changed amount immediately,
                             // but don't set the balance since the transaction will be processed by the websocket
                             if (balanceListener) balanceListener(balance - amount - fee);
