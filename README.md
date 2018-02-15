@@ -3,7 +3,11 @@ Bitcoin Cash Wallet for Chrome/Firefox
 
 Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.
 
-roll your own by simply downloading this repo with the button on the right, renaming .zip to .crx and drag-and-dropping it into Chrome.
+[Chrome extension](https://chrome.google.com/webstore/detail/bitcoin-cash-wallet/oahplndhnkljjjpnlcnbkacomoepfgan?hl=en-US&gl=US)
+
+[Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/bitcoin-cash-wallet/)
+
+or roll your own by simply downloading this repo with the button on the right, renaming .zip to .crx and drag-and-dropping it into Chrome.
 
 This is a forked project from Andrew Toth's Bitcoin Wallet here: https://github.com/andrewtoth/BitcoinWallet
 
