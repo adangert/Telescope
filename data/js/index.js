@@ -100,7 +100,8 @@ $(document).ready(function () {
     });
 
     if (typeof chrome === 'undefined') {
-        addon.port.on('show', setupWallet);
+        console.log("addon was not defined error, commented out");
+        //addon.port.on('show', setupWallet);
     }
 
     /*
@@ -419,9 +420,10 @@ $(document).ready(function () {
     if (typeof chrome !== 'undefined') {
         $('#version').text(chrome.runtime.getManifest().version);
     } else {
-        addon.port.on('version', function (version) {
-            $('#version').text(version);
-        });
+        console.log("addon was not defined, commented out");
+        // addon.port.on('version', function (version) {
+        //     $('#version').text(version);
+        // });
     }
 
     $('#aboutModal').on('click', 'a', function () {

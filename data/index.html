@@ -5,45 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet">
+
     <script src="js/libs/promise.min.js" type="text/javascript"></script>
     <script src="js/libs/cryptojs.min.js" type="text/javascript"></script>
     <script src="js/libs/bitcoincash-0.1.10.min.js" type="text/javascript"></script>
     <script src="js/libs/BigInteger.min.js" type="text/javascript"></script>
     <script src="js/libs/socket.io.js" type="text/javascript"></script>
-    <script src="js/libs/jquery.min.js" type="text/javascript"></script>
-    <script src="js/libs/bootstrap.min.js" type="text/javascript"></script>
+
+    <script src="js/libs/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="js/libs/bootstrap.bundle.min.js" type="text/javascript"></script>
     <script src="js/libs/qrcode.js" type="text/javascript"></script>
     <script src="js/preferences.js" type="text/javascript"></script>
     <script src="js/util.js" type="text/javascript"></script>
     <script src="js/currency-manager.js" type="text/javascript"></script>
     <script src="js/wallet.js" type="text/javascript"></script>
     <script src="js/index.js" type="text/javascript"></script>
+
+
 </head>
 <body>
 
 <div id="cover" style="display: none;"></div>
-<div id="main" class="container">
-    <div id="send" class="row panel panel-primary">
-        <div class="panel-heading">
-            Send BCH
-            <div class="btn-group">
-                <button type="button" id="settingsButton" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-wrench"></span>
+<div id="main" class="container no-padding">
+    <div id="send" class="card">
+        <div class="card-header bg-primary text-white ">Send BCH
+        <!--  <button  id="settingsButton"  class="btn btn-primary pull-xs-right dropdown-toggle" type="button" data-toggle="dropdown">Do something cool</button> -->
+           <div class="btn-group">
+
+                <button type="button" id="settingsButton" class="btn btn-info btn-small dropdown-toggle " data-toggle="dropdown">
+
+                     <span class="glyphicon glyphicon-wrench"></span>
                 </button>
-                <ul id="settingsMenu" class="dropdown-menu">
-                    <li><a id="setPassword">Set Password/Encrypt</a></li>
-                    <li><a id="setCurrency">Set Currency</a></li>
-                    <li><a id="setUnits">Set BCH Units</a></li>
-                    <li class="divider">
-                    <li><a id="showPrivateKey">Show Private Key</a></li>
-                    <li><a id="importPrivateKey">Import Private Key</a></li>
-                    <li><a id="generateNewWallet">Generate New Wallet</a></li>
-                    <li class="divider">
-                    <li><a data-toggle="modal" data-target="#aboutModal">About</a></li>
-                </ul>
-            </div>
+                <div id="settingsMenu" class="dropdown-menu">
+                    <a class="dropdown-item" id="setPassword">Set Password/Encrypt</a>
+                    <a class="dropdown-item" id="setCurrency">Set Currency</a>
+                    <a class="dropdown-item" id="setUnits">Set BCH Units</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" id="showPrivateKey">Show Private Key</a>
+                    <a class="dropdown-item" id="importPrivateKey">Import Private Key</a>
+                    <a class="dropdown-item" id="generateNewWallet">Generate New Wallet</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" data-toggle="modal" data-target="#aboutModal">About</a>
+                </div>
+           </div>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <div id="successAlert" class="alert alert-success alert-dismissable"  style="display: none;">
                 <button id="successAlertClose" type="button" class="close">&times;</button>
                 <p id="successAlertLabel">Success</p>
@@ -71,7 +77,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel-footer">
+        <div class="card-footer">
             Balance: <span id="balance">0 BCH</span>
             <button type="button" id="addressPopover" class="btn btn-default" data-toggle="modal" data-target="#receiveModal">
                 Address&nbsp;&nbsp;<span class="glyphicon glyphicon-qrcode"></span>

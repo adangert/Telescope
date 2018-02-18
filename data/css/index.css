@@ -14,6 +14,12 @@ body .modal-dialog {
     overflow: hidden;
 }
 
+
+
+body {
+  font-size: .9rem;
+}
+
 #privateKeyQRCode {
     margin-left: 77px;
 }
@@ -23,15 +29,30 @@ body .modal-dialog {
 }
 
 #settingsButton {
-    margin-left: 296px;
+    margin-left: 288px;
 }
 
 #settingsMenu {
-    margin-left: 115px;
+    margin-left: -115px;
 }
 
 .no-padding {
     margin: 0px;
+    padding: 0px;
+}
+
+label {
+    margin-bottom: 0.2rem;
+    font-weight:bold;
+}
+
+form label{
+  font-weight:bold;
+}
+
+.form-control {
+  height: 32px;
+  font-size: .9rem;
 }
 
 #sendConfirmationText,
@@ -39,8 +60,34 @@ body .modal-dialog {
     word-wrap: break-word;
 }
 
-.panel {
+.card {
     margin-bottom: 0px;
+    border: 0;
+
+
+}
+
+.dropdown-item{
+      padding: .08rem .9rem;
+}
+
+.dropdown-menu{
+      font-size: .9rem;
+}
+
+.card-footer{
+  padding-left: 15px;
+padding-right: 12px;
+padding-top: 10px;
+padding-bottom: 10px;
+}
+
+
+.card-body {
+  padding-left: 15px;
+padding-top: 15px;
+padding-right: 15px;
+padding-bottom: 15px;
 }
 
 #cover {
