@@ -10,7 +10,7 @@ a:hover {
 
 body .modal-dialog {
     margin: 0px;
-    width: 420px;
+    width: 440px;
     overflow: hidden;
 }
 
@@ -25,15 +25,25 @@ body {
 }
 
 #qrcode {
-    margin-left: 108px;
+    margin-left: 125px;
 }
 
 #settingsButton {
     margin-left: 288px;
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 
 #settingsMenu {
     margin-left: -115px;
+}
+
+.h5, h5{
+      font-size: .9rem;
+}
+
+p{
+      margin-bottom: 0px;
 }
 
 .no-padding {
@@ -51,8 +61,17 @@ form label{
 }
 
 .form-control {
-  height: 32px;
+
   font-size: .9rem;
+}
+
+.input-group-append{
+  height: 32px;
+}
+
+.btn{
+  padding-bottom: 4px;
+  padding-top: 4px;
 }
 
 #sendConfirmationText,
@@ -65,6 +84,10 @@ form label{
     border: 0;
 
 
+}
+
+input#address {
+      height: 32px;
 }
 
 .dropdown-item{

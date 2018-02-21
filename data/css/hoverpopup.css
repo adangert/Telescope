@@ -45,11 +45,12 @@ body {
     right: 6px;
 }
 
-.pull-right {
+.float-right {
     margin-right: 28px;
 }
 
 h6 {
     margin-top: 4px;
     margin-bottom: 6px;
+    font-size: 12px;
 }

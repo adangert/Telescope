@@ -88,8 +88,8 @@ $(document).ready(function () {
                     return Promise.all([currencyManager.formatAmount(json.totalReceivedSat), currencyManager.formatAmount(json.balanceSat)]);
                 }).then(function (amounts) {
                     $iframe.find('#progress').fadeOut('fast', function () {
-                        $iframe.find('#received').fadeIn('fast').html('Total received: <span class="pull-right">' + amounts[0] + '</span>');
-                        $iframe.find('#balance').fadeIn('fast').html('Final balance: <span class="pull-right">' + amounts[1] + '</span>');
+                        $iframe.find('#received').fadeIn('fast').html('Total received: <span class="float-right">' + amounts[0] + '</span>');
+                        $iframe.find('#balance').fadeIn('fast').html('Final balance: <span class="float-right">' + amounts[1] + '</span>');
                     });
                 });
                 $iframe.find('#infoButton').click(function () {

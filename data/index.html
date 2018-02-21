@@ -63,23 +63,27 @@
                 <div id="addressAlert" class="alert alert-danger" style="display: none;">
                     Not a valid address.
                 </div>
-                <input type="text" class="form-control" id="sendAddress">
+                <input type="text" class="form-control form-control-sm col-sm-2" id="sendAddress">
             </div>
             <label id="amountLabel" for="amount">Amount:</label>
             <div id="amountAlert" class="alert alert-danger" style="display: none;">
                 Amount must be greater than zero and less than your balance.
             </div>
             <div class="input-group">
-                <input type="number" min="0" step="0.001" class="form-control" id="amount" placeholder="(incl. 0.00001 BCH fee)">
-                <span id="sendUnit" class="input-group-addon">BCH</span>
-                <div class="input-group-btn">
-                    <button id="sendButton" type="submit" class="btn btn-primary">Send</button>
+                <input type="number" min="0" step="0.001" class="form-control form-control-sm" id="amount" placeholder="(incl. 0.00001 BCH fee)">
+                <div class="input-group-append">
+                  <span id="sendUnit" class="input-group-text">BCH</span>
+                  <button id="sendButton" type="submit" class="btn btn-primary">Send</button>
+
+                  </div>
                 </div>
+
+
             </div>
         </div>
         <div class="card-footer">
             Balance: <span id="balance">0 BCH</span>
-            <button type="button" id="addressPopover" class="btn btn-default" data-toggle="modal" data-target="#receiveModal">
+            <button type="button" id="addressPopover" class="btn btn-outline-primary" data-toggle="modal" data-target="#receiveModal">
                 Address&nbsp;&nbsp;<span class="glyphicon glyphicon-qrcode"></span>
             </button>
         </div>
@@ -91,8 +95,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+              <h4 class="modal-title">Receive Address</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Receive Address</h4>
+
             </div>
             <div class="modal-body">
                 <div id="qrcode">
@@ -192,8 +197,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+              <h4 class="modal-title">Show Private Key/Export Wallet</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Show Private Key/Export Wallet</h4>
+
             </div>
             <div class="modal-body">
                 <div class="alert alert-warning">
@@ -223,8 +229,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+              <h4 class="modal-title">Import Private Key</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Import Private Key</h4>
+
             </div>
             <div class="modal-body">
                 <div class="alert alert-warning">
@@ -254,8 +261,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+              <h4 class="modal-title" id="generateNewWalletLabel">Generate New Wallet</h4>
                 <button type="button" class="close">&times;</button>
-                <h4 class="modal-title" id="generateNewWalletLabel">Generate New Wallet</h4>
+
             </div>
             <div class="modal-body">
                 <div class="alert alert-warning">
@@ -281,8 +289,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+              <h4 class="modal-title">About</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">About</h4>
+
             </div>
             <div class="modal-body">
                 <h5>Bitcoin Cash Wallet v<span id="version">1.0</span></h5>

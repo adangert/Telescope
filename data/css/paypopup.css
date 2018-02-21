@@ -26,8 +26,29 @@ body {
     display: block;
 }
 
+.popover.bottom .arrow {
+    top: -11px;
+    left: 50%;
+    margin-left: -11px;
+    border-bottom-color: rgba(0,0,0,0.25);
+    border-top-width: 0;
+    border-width: 11px;
+
+
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+}
+
 .popover-content {
     padding: 5px;
+}
+
+.popover.bottom {
+    margin-top: 10px;
 }
 
 .progress {
