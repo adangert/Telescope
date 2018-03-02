@@ -9,7 +9,7 @@ body {
     width: 156px;
 }
 
-.alert-success {
+ .alert-success {
     margin-bottom: 0px;
 }
 
@@ -26,7 +26,7 @@ body {
     display: block;
 }
 
-.popover.bottom .arrow {
+/* .popover.bottom .arrow {
     top: -11px;
     left: 50%;
     margin-left: -11px;
@@ -41,7 +41,7 @@ body {
     height: 0;
     border-color: transparent;
     border-style: solid;
-}
+} */
 
 .popover-content {
     padding: 5px;

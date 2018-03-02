@@ -1,16 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head>
+ <head>
     <title>Bitcoin Wallet Extension</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/paypopup.css" rel="stylesheet">
 </head>
 <body>
+<div class="popover fade bs-popover-bottom show" role="tooltip" id="popover586074" style="will-change: transform; position: absolute;  top: 0px; left: 0px;" x-placement="bottom">
+  <div class="arrow" style="left: 124px;"></div>
+  <h3 class="popover-header"></h3>
+  <div class="popover-body">
 
-<div id="main" class="popover" data-toggle="popover" data-placement="bottom" style="display:none;">
 
-     <div class="popover-content">
+    <div id="successAlert" class="alert alert-success" style="display:none;">
+        Success
+    </div>
+   <div id="errorAlert" class="alert alert-danger" style="display:none;">
+       Not a valid address.
+   </div>
+   <div class="form-group">
+       <input type="text" class="form-control form-control-sm" id="address" autocomplete="off" placeholder="To Address">
+   </div>
+   <div class="form-group">
+       <input type="number" min="0" step="0.001" class="form-control form-control-sm" id="amount" autocomplete="off" placeholder="Amount (BCH)">
+   </div>
+   <div class="form-group" style="display:none;">
+       <input type="password" class="form-control input-sm" id="password" autocomplete="off" placeholder="Password">
+   </div>
+   <button id="button" type="button" class="btn btn-primary btn-sm">Send</button>
+    <div id="progress" class="progress progress-striped active" style="display:none;">
+        <div class="progress-bar progress-bar-info"></div>
+    </div>
+</div>
+  </div>
+</div>
+
+
+
+<!-- <div id="main" class="popover" data-toggle="popover" data-placement="right" style="display:none;">
+
+     <div class="data-content">
          <div id="successAlert" class="alert alert-success" style="display:none;">
              Success
          </div>
@@ -32,6 +62,8 @@
          </div>
      </div>
 </div>
+ -->
+
 
 </body>
 </html>
