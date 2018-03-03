@@ -56,6 +56,9 @@ $(document).ready(function () {
                 // Replace the node with the wrapped bitcoin addresses HTML
                 var replacementNode = document.createElement('span'),
                     node = textNodes[i];
+                //this wraps bitcoin cash addresses with hrefs
+                //i.e. in the above comment:
+                //<span class="bitcoin-address"><a href="'+matches[j]+'">' + matches[j] + '</a></span>
                 replacementNode.innerHTML = text;
                 node.parentNode.insertBefore(replacementNode, node);
                 node.parentNode.removeChild(node);
