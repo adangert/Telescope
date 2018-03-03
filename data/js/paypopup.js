@@ -239,7 +239,7 @@ $(document).ready(function () {
                     $iframe.find('#password').parent().fadeOut('fast');
                     $iframe.find('#button').fadeOut('fast', function () {
                         $iframe.find('#progress').fadeIn('fast', function () {
-                            wallet.send(newAddress, newAmount, FEE, $iframe.find('#password').val()).then(function () {
+                            wallet.send(newAddress, newAmount, wallet.getFee(), $iframe.find('#password').val()).then(function () {
                                 $iframe.find('#progress').fadeOut('fast', function () {
                                     $iframe.find('#successAlert').fadeIn('fast').delay(1000).fadeIn('fast', removeFrame);
                                 });
