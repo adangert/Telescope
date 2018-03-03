@@ -111,15 +111,20 @@
                 request.send(null);
                 var text = request.response;
                 text = text.replace(/css\//g, chrome.extension.getURL('') + 'data/css/');
-                resolve(iframe);
+                console.log(iframe.contentWindow.document.getElementById('progress'));
+                // resolve(iframe);
+                setTimeout(function(){
+                    resolve(iframe);
+                }, 100);
+
                 // // For Firefox get the encoded HTML and set it to the iFrame's src
                 // iframe.src = 'moz-extension://ff3b317a-b2d5-4e7b-acee-c90f0ad9b174/data/paypopup.html';
-                // ret.message('html', src).then(function (url) {
-                //     iframe.src = url;
+                // ret.message('html', fullURL).then(function (url) {
+                //     // iframe.src = fullURL;
                 //     // Only way to reliably know when the frame is ready in Firefox is by polling
                 //     function pollReady() {
                 //         if (!iframe.contentWindow.document.getElementById('progress')) {
-                //             setTimeout(pollReady, 100);
+                //             setTimeout(pollReady, 5);
                 //         } else {
                 //             resolve(iframe);
                 //         }

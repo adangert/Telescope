@@ -92,6 +92,7 @@ input#address {
 
 .dropdown-item{
       padding: .08rem .9rem;
+      cursor: pointer;
 }
 
 .dropdown-menu{
