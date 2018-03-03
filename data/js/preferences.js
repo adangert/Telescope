@@ -16,6 +16,7 @@
         PRIVATE_KEY = "wallet.private_key",
         IS_ENCRYPTED = "wallet.is_encrypted",
         LAST_BALANCE = "wallet.last_balance",
+        LAST_FEE = "wallet.last_fee",
         EXCHANGE_RATE = 'wallet.exchange_rate',
         BCH_UNITS = 'wallet.bch_units',
         CURRENCY = 'wallet.currency',
@@ -31,6 +32,7 @@
                 object[PRIVATE_KEY] = '';
                 object[IS_ENCRYPTED] = false;
                 object[LAST_BALANCE] = 0;
+                object[LAST_FEE] = 0;
                 object[EXCHANGE_RATE] = 0;
                 object[BCH_UNITS] = 'BCH';
                 object[CURRENCY] = 'USD';
@@ -43,6 +45,7 @@
                         message[PRIVATE_KEY] = '';
                         message[IS_ENCRYPTED] = false;
                         message[LAST_BALANCE] = 0;
+                        message[LAST_FEE] = 0;
                         message[EXCHANGE_RATE] = 0;
                         message[BCH_UNITS] = 'BCH';
                         message[CURRENCY] = 'USD';
@@ -104,6 +107,12 @@
         setLastBalance: function (lastBalance) {
             return set(LAST_BALANCE, lastBalance);
         },
+
+        getLastFee: get(LAST_FEE),
+        setLastFee: function (lastFee) {
+            return set(LAST_FEE, lastFee);
+        },
+
 
         getExchangeRate: get(EXCHANGE_RATE),
         setExchangeRate: function (exchangeRate) {

@@ -12,11 +12,13 @@
 
 (function (window) {
     var balance = 0,
+        fee = 0,
         address = '',
         old_address = '',
         privateKey = '',
         isEncrypted = false,
         websocket = null,
+        SATOSHIS = 100000000,
         balanceListener = null;
 
     var wallet = function () {};
@@ -32,6 +34,15 @@
 
         getBalance: function () {
             return balance;
+        },
+
+        getFee: function () {
+            console.log("updating fee woot");
+            updateFee();
+            console.log("getting the fee in hear "+fee);
+            console.log("well the fee is");
+            console.log("here is it "+fee)
+            return fee;
         },
 
         isEncrypted: function () {
@@ -65,7 +76,8 @@
                     address = pair.toAddress().toString(bch.Address.CashAddrFormat);
                     balance = 0;
                     Promise.all([preferences.setAddress(address), preferences.setOldAddress(old_address), preferences.setPrivateKey(privateKey), preferences.setIsEncrypted(isEncrypted)]).then(function () {
-                        updateBalance()
+                        updateBalance();
+                        updateFee();
                         resolve();
                     });
                 } else {
@@ -84,6 +96,7 @@
                         privateKey = values[2];
                         isEncrypted = values[3];
                         updateBalance();
+                        updateFee();
                         resolve();
                     } else {
                         reject(Error('No address'));
@@ -114,6 +127,7 @@
                         balance = 0;
                         Promise.all([preferences.setAddress(address),preferences.setOldAddress(old_address), preferences.setPrivateKey(privateKey), preferences.setLastBalance(0)]).then(function () {
                             updateBalance();
+                            updateFee();
                             resolve();
                         });
                     } catch (e) {
@@ -167,8 +181,28 @@
 
     };
 
+
+    function updateFee(){
+      console.log("doing updatefee right meow");
+      preferences.getLastFee().then(function (result) {
+          fee = result;
+
+
+      util.get('https://blockdozer.com/insight-api/utils/estimatefee/' + '?nocache=' + new Date().getTime()).then(function (response) {
+          var json = JSON.parse(response);
+          //the number of satoshis
+          console.log("lookin for that fee fee fee");
+          console.log(json[2]);
+          fee = Math.round(100000000 * json[2]);
+          console.log("fee is "+fee);
+          // json["balanceSat"] + json["unconfirmedBalanceSat"];
+          return preferences.setLastFee(fee);
+      })
+    });
+    }
     // Gets the current balance and sets up a websocket to monitor new transactions
     function updateBalance() {
+      console.log("updating balance");
         // Make sure we have an address
         if (address.length) {
             // Last stored balance is the fastest way to update
@@ -176,7 +210,8 @@
                 balance = result;
                 if (balanceListener) balanceListener(balance);
                 // Check blockchain.info for the current balance
-                util.get('https://blockdozer.com/insight-api/addr/' + address + '?noTxList=1&nocache=' + new Date().getTime()).then(function (response) {
+                console.log('https://blockdozer.com/insight-api/addr/' + address + '?nocache=' + new Date().getTime());
+                util.get('https://blockdozer.com/insight-api/addr/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
                     var json = JSON.parse(response);
                     balance = json["balanceSat"] + json["unconfirmedBalanceSat"];
 

@@ -19,11 +19,12 @@ $(document).ready(function () {
     clickY,
     port = null;
 
-    var req = new XMLHttpRequest();
-    req.open('GET', 'https://blockdozer.com/insight-api/utils/estimatefee/', false);
-    req.send(null);
-    //var FEE = SATOSHIS * .0001;
-    var FEE = Math.round(SATOSHIS * JSON.parse(req.response)[2]);
+    // var req = new XMLHttpRequest();
+    // req.open('GET', 'https://blockdozer.com/insight-api/utils/estimatefee/', false);
+    // req.send(null);
+    // //var FEE = SATOSHIS * .0001;
+    // var FEE = Math.round(SATOSHIS * JSON.parse(req.response)[2]);
+    var FEE = wallet.getFee();
 
     // Event is broadcast when context menu is opened on the page
     $(document).on('contextmenu', function (e) {

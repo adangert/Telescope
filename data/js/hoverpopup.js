@@ -84,7 +84,7 @@ $(document).ready(function () {
                 iframe.style.top = Number(rect.top) + Number(window.pageYOffset) - height + 'px';
                 var $iframe = $(iframe.contentWindow.document);
                 $iframe.find('#main').fadeIn('fast');
-                util.getJSON('https://blockdozer.com/insight-api/addr/' + address + '?noTxList=1&nocache='+ new Date().getTime()).then(function (json) {
+                util.getJSON('https://blockdozer.com/insight-api/addr/' + address + '?nocache='+ new Date().getTime()).then(function (json) {
                     return Promise.all([currencyManager.formatAmount(json.totalReceivedSat), currencyManager.formatAmount(json.balanceSat)]);
                 }).then(function (amounts) {
                     $iframe.find('#progress').fadeOut('fast', function () {

@@ -6,7 +6,7 @@ body {
     margin-bottom: 5px;
     padding: 5px;
     font-size: 12px;
-    width: 156px;
+    width: 192px;
 }
 
  .alert-success {
@@ -18,12 +18,19 @@ body {
 }
 
 .btn-sm {
-    width: 156px;
+    width: 192px;
 }
 
 .popover {
     margin-left: 5px;
     display: block;
+}
+
+.popover-body{
+  padding-top: 0.3rem;
+  padding-right: 0.3rem;
+  padding-bottom: 0.3rem;
+  padding-left: 0.3rem;
 }
 
 /* .popover.bottom .arrow {

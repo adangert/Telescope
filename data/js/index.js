@@ -13,13 +13,10 @@ $(document).ready(function () {
     // Setup the wallet, page values and callbacks
     var val = '',
         address = '',
-        SATOSHIS = 100000000;
 
-        var req = new XMLHttpRequest();
-        req.open('GET', 'https://blockdozer.com/insight-api/utils/estimatefee/',false);
-        req.send(null);
-        // var FEE = SATOSHIS * .0001;
-        var FEE = Math.round(SATOSHIS * JSON.parse(req.response)[2]);
+        SATOSHIS = 100000000;
+        var FEE = wallet.getFee();
+
 
 
   //       util.get('https://bch-insight.bitpay.com/api/utils/estimatefee').then(function (response) {
@@ -75,8 +72,8 @@ $(document).ready(function () {
         }
 
         setBalance(wallet.getBalance());
+        setFee(wallet.getFee());
         $('#sendUnit').html(BCHUnits);
-        $('#amount').attr('placeholder', '(Plus ' + FEE / BCHMultiplier + ' ' + BCHUnits + ' fee)').attr('step', 100000 / BCHMultiplier).val(null);
         $('#amountLabel').text('Amount:');
     }
     preferences.getBCHUnits().then(setBCHUnits);
@@ -87,6 +84,16 @@ $(document).ready(function () {
         }
         $('#balance').text(balance / BCHMultiplier + ' ' + BCHUnits);
     }
+
+    function setFee(fee) {
+        if (Number(fee) < 0 || isNaN(fee)) {
+            fee = 0;
+        }
+        $('#amount').attr('placeholder', '(Plus ' + fee / BCHMultiplier + ' ' + BCHUnits + ' fee)').attr('step', 100000 / BCHMultiplier).val(null);
+
+        // $('#balance').text(balance / BCHMultiplier + ' ' + BCHUnits);
+    }
+
 
     $('#successAlertClose').click(function () {
         $('#successAlert').fadeOut();
@@ -111,6 +118,7 @@ $(document).ready(function () {
         val = Math.floor(Number($('#amount').val() * BCHMultiplier));
         address = $('#sendAddress').val();
         var balance = wallet.getBalance();
+        FEE = wallet.getFee();
         var validAmount = true;
         if (val <= 0) {
             validAmount = false;

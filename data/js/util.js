@@ -18,6 +18,15 @@
                 var req = new XMLHttpRequest();
                 //req.setRequestHeader('Cache-Control', 'no-cache');
                 req.open((type ? type : 'GET'), url, true);
+                // req.setRequestHeader('cache-control', 'no-cache, must-revalidate, post-check=0, pre-check=0');
+                req.setRequestHeader('Cache-Control', 'private');
+                req.setRequestHeader('Cache-Control','max-age=0');
+                req.setRequestHeader('Cache-Control','no-store');
+                req.setRequestHeader('Cache-Control','no-cache');
+                req.setRequestHeader('Expires', '0');
+                // req.setRequestHeader('expires', 'Tue, 01 Jan 1980 1:00:00 GMT');
+                req.setRequestHeader('Pragma', 'no-cache');
+                console.log(req);
                 req.onload = function () {
                     if (req.status == 200) {
                         resolve(req.response);

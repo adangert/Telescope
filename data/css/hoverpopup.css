@@ -10,6 +10,22 @@ body {
     margin-top: 0;
 }
 
+.popover{
+  left: 24px;
+}
+
+.popover-body{
+  padding-top: 0.3rem;
+  padding-right:  0.75rem;
+  padding-bottom: 0.3rem;
+  padding-left: 0.75rem;
+      width: 200px;
+}
+
+#arrow{
+  left: 82px;
+}
+
 .popover-content {
     padding: 5px;
 }
