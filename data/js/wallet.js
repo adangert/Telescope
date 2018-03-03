@@ -37,11 +37,7 @@
         },
 
         getFee: function () {
-            console.log("updating fee woot");
             updateFee();
-            console.log("getting the fee in hear "+fee);
-            console.log("well the fee is");
-            console.log("here is it "+fee)
             return fee;
         },
 
@@ -183,7 +179,6 @@
 
 
     function updateFee(){
-      console.log("doing updatefee right meow");
       preferences.getLastFee().then(function (result) {
           fee = result;
 
@@ -191,10 +186,7 @@
       util.get('https://blockdozer.com/insight-api/utils/estimatefee/' + '?nocache=' + new Date().getTime()).then(function (response) {
           var json = JSON.parse(response);
           //the number of satoshis
-          console.log("lookin for that fee fee fee");
-          console.log(json[2]);
           fee = Math.round(100000000 * json[2]);
-          console.log("fee is "+fee);
           // json["balanceSat"] + json["unconfirmedBalanceSat"];
           return preferences.setLastFee(fee);
       })
@@ -202,7 +194,6 @@
     }
     // Gets the current balance and sets up a websocket to monitor new transactions
     function updateBalance() {
-      console.log("updating balance");
         // Make sure we have an address
         if (address.length) {
             // Last stored balance is the fastest way to update
@@ -210,7 +201,6 @@
                 balance = result;
                 if (balanceListener) balanceListener(balance);
                 // Check blockchain.info for the current balance
-                console.log('https://blockdozer.com/insight-api/addr/' + address + '?nocache=' + new Date().getTime());
                 util.get('https://blockdozer.com/insight-api/addr/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
                     var json = JSON.parse(response);
                     balance = json["balanceSat"] + json["unconfirmedBalanceSat"];

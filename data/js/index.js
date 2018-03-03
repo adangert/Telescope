@@ -107,7 +107,6 @@ $(document).ready(function () {
     });
 
     if (typeof chrome === 'undefined') {
-        console.log("addon was not defined error, commented out");
         //addon.port.on('show', setupWallet);
     }
 

@@ -26,7 +26,6 @@
                 req.setRequestHeader('Expires', '0');
                 // req.setRequestHeader('expires', 'Tue, 01 Jan 1980 1:00:00 GMT');
                 req.setRequestHeader('Pragma', 'no-cache');
-                console.log(req);
                 req.onload = function () {
                     if (req.status == 200) {
                         resolve(req.response);
