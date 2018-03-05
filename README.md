@@ -3,6 +3,8 @@ Bitcoin Cash Wallet for Chrome/Firefox
 
 Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.
 
+[Video](https://youtu.be/JXGEL-mEXhY) of how to use
+
 [Chrome extension](https://chrome.google.com/webstore/detail/bitcoin-cash-wallet/oahplndhnkljjjpnlcnbkacomoepfgan?hl=en-US&gl=US)
 
 [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/bitcoin-cash-wallet/)
