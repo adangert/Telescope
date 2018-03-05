@@ -5,7 +5,7 @@
   "description": "Bitcoin wallet in the browser. Send and receive instantly on any web page.",
   "author": "Aaron Angert",
   "license": "MIT",
-  "version": "1.4",
+  "version": "1.5",
   "permissions": {
     "cross-domain-content": [
       "https://blockchain.info/",
