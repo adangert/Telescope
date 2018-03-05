@@ -83,6 +83,10 @@ $(document).ready(function () {
             balance = 0;
         }
         $('#balance').text(balance / BCHMultiplier + ' ' + BCHUnits);
+        currencyManager.formatAmount(balance).then(function (formattedMoney) {
+             var text =  ' (' + formattedMoney + ')';
+            $('#balancemon').text(text);
+        });
     }
 
     function setFee(fee) {
