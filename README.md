@@ -17,3 +17,9 @@ Security
 --------
 
 The private key is stored in the browser only. Transactions are signed in the browser and are pushed to blockdozer.com. The private key will only leave the browser to be synced with other Chrome/Firefox browsers that you are signed into. Encrypting the private key ensures that nobody will know the private key without the password, not even this extension.
+
+Contributing
+------------
+
+It is my hope that this project can be supported by the community, I am very open to ideas and pull requests. Please feel free to make pull requests for features, or add new feature requests/bugs through the issues tab.
+Thank you!
