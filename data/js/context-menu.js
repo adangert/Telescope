@@ -42,7 +42,15 @@
                     // Wrap address with a unique span so we can determine the exact position
                     text = text.replace(address, '<span id="bitcoin-address-' + address + '">' + address + '</span>');
                     var replacementNode = document.createElement('span');
-                    replacementNode.innerHTML = text;
+                    var sanitized_text  = sanitizeHtml(text,{
+                      allowedTags: ['span', 'a' ],
+                      allowedSchemes: [ 'bitcoincash' ],
+                      allowedAttributes: {
+                        'a': [ 'href' ],
+                        'span': ['class']
+                      }
+                    });
+                    replacementNode.innerHTML = sanitized_text;
                     node.parentNode.insertBefore(replacementNode, node);
                     node.parentNode.removeChild(node);
                     // Get the rect of the address

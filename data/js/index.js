@@ -28,7 +28,7 @@ $(document).ready(function () {
   //       });
         var BCHUnits = 'BCH',
         BCHMultiplier = SATOSHIS;
-
+        
 
     function setupWallet() {
         wallet.restoreAddress().then(setQRCodes,
