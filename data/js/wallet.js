@@ -201,9 +201,10 @@
                 balance = result;
                 if (balanceListener) balanceListener(balance);
                 // Check blockchain.info for the current balance
-                util.get('https://blockdozer.com/insight-api/addr/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
+                util.get('https://bch-insight.bitpay.com/api/addr/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
                     var json = JSON.parse(response);
-                    balance = json["balanceSat"] + json["unconfirmedBalanceSat"];
+                    //bitpay, only balanceSat
+                    balance = json["balanceSat"]; //+ json["unconfirmedBalanceSat"];
 
                     return preferences.setLastBalance(balance);
                 }).then(function () {
@@ -317,7 +318,7 @@
             var decryptedPrivateKey = ret.getDecryptedPrivateKey(password);
             if (decryptedPrivateKey) {
                 // Get all unspent outputs from blockchain.info to generate our inputs
-                util.getJSON('https://blockdozer.com/insight-api/addr/' + address+'/utxo?nocache='+ new Date().getTime()).then(function (json) {
+                util.getJSON('https://bch-insight.bitpay.com/api/addr/' + address+'/utxo?nocache='+ new Date().getTime()).then(function (json) {
                     var inputs = json,
                         selectedOuts = [];
                         //eckey = new Bitcoin.ECKey(decryptedPrivateKey),
@@ -329,33 +330,58 @@
 
                         var utxos = [];
                     // Gather enough inputs so that their value is greater than or equal to the total cost
+                      var new_utxo = false;
+                      var multi_utxo = false;
                     for (var i = 0; i < inputs.length; i++) {
-                        if(inputs[i].confirmations >= 0){
+                        if(inputs[i].confirmations === 0){
+                          if(new_utxo === false){
+                          new_utxo = true;
+                        }else{
+                          multi_utxo = true;
+                        }
+                        }
+                      }
+
+
+
+                    for (var i = 0; i < inputs.length; i++) {
+                        if((new_utxo === false && inputs[i].confirmations >= 0) || (new_utxo === true && inputs[i].confirmations === 0)){
                           selectedOuts.push(inputs[i]);
                           availableValue = availableValue.add(new bigInt('' + inputs[i].satoshis, 10));
 
                           // If we ever need to switch to the new address
-                          // var new_address = '';
-                          // if (inputs[i].address.indexOf("bitcoincash:") == -1){
-                          //   new_address = 'bitcoincash:'+inputs[i].address;
-                          // }else{
-                          //   new_address = inputs[i].address;
-                          // }
-                          //
-                          // legacy_utxo_address = bch.Address.fromString(new_address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
+                          var new_address = '';
+                          if (inputs[i].address.indexOf("bitcoincash:") == -1){
+                            new_address = 'bitcoincash:'+inputs[i].address;
+                          }else{
+                            new_address = inputs[i].address;
+                          }
+
+                          legacy_utxo_address = bch.Address.fromString(new_address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
                           var utxo = {
                           'txId' : inputs[i].txid,
                           'outputIndex' : inputs[i].vout,
-                          'address' : inputs[i].address,
+                          'address' : legacy_utxo_address,
                           'script' : inputs[i].scriptPubKey,
                           'satoshis' : inputs[i].satoshis
                         };
                           utxos.push(utxo);
                           if (availableValue.compareTo(txValue) >= 0) break;
+
                       }
+                      //If there are 0 conf transactions, only use the first one found
+                      if(new_utxo) break;
+
                     }
                     // If there aren't enough unspent outputs to available then we can't send the transaction
-                    if (availableValue.compareTo(txValue) < 0) {
+                    // console.log("new utxo is ");
+                    // console.log(new_utxo);
+                    // console.log(availableValue.compareTo(txValue));
+                    if (multi_utxo === true){
+                      reject(Error('wait for confirmations'));
+                    }else if (new_utxo && availableValue.compareTo(txValue) < 0) {
+                        reject(Error('wait for confirmations'));
+                    } else if (availableValue.compareTo(txValue) < 0) {
                         reject(Error('Insufficient funds'));
                     } else {
                         // Create the transaction
@@ -418,10 +444,10 @@
                         //var insight = new explorer.Insight('https://bch-insight.bitpay.com');
                         console.log(transaction.toString());
                         console.log(data);
-                        util.post('https://blockdozer.com/insight-api/tx/send', data).then(function () {
+                        util.post('https://bch-insight.bitpay.com/api/tx/send', data).then(function () {
                             // Notify the balance listener of the changed amount immediately,
                             // but don't set the balance since the transaction will be processed by the websocket
-                            if (balanceListener) balanceListener(balance - amount - fee);
+                            //if (balanceListener) balanceListener(balance - amount - fee);
                             resolve();
                         }, function () {
                             reject(Error('Unknown error'));
