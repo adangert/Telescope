@@ -31,4 +31,5 @@ Tip Jar
 bitcoincash:qqsdkyk424dk5n03ranfpwa6fmfsuc26jszxth2qyk
 
 or put a bch bounty on an issue you would like to see finished:
+
 https://github.com/chaintip/bounties
