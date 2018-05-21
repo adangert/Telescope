@@ -7,7 +7,7 @@ Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.
 
 [Chrome extension](https://chrome.google.com/webstore/detail/bitcoin-cash-wallet/oahplndhnkljjjpnlcnbkacomoepfgan?hl=en-US&gl=US)
 
-[Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/bitcoin-cash-wallet/) (currently being worked on should be online soon)
+[Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/bitcoin-cash-wallet/)
 
 or roll your own by simply downloading this repo with the button on the right, renaming .zip to .crx and drag-and-dropping it into Chrome.
 
@@ -21,7 +21,15 @@ The private key is stored in the browser only. Transactions are signed in the br
 Contributing
 ------------
 
-It is my hope that this project can be supported by the community, I am very open to ideas and pull requests. I do no plan to make a profit off of this project, other than through donations, as well as the increased usage of BCH. Please feel free to make pull requests for features, or add new feature requests/bugs through the issues tab, for anything you would like to see be added.
+It is my hope that this project can be supported by the community, I am very open to ideas and pull requests. I do no plan to make a profit off of this project, other than through donations, bounties, as well as the increased usage of BCH. Please feel free to make pull requests for features, or add new feature requests/bugs through the issues tab, for anything you would like to see added.
 
 
 Thank you!
+
+Tip Jar
+-------------
+bitcoincash:qqsdkyk424dk5n03ranfpwa6fmfsuc26jszxth2qyk
+
+or put a bch bounty on an issue you would like to see finished:
+
+https://github.com/chaintip/bounties
