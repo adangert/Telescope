@@ -21,7 +21,11 @@ The private key is stored in the browser only. Transactions are signed in the br
 Contributing
 ------------
 
-It is my hope that this project can be supported by the community, I am very open to ideas and pull requests. I do no plan to make a profit off of this project, other than through donations, as well as the increased usage of BCH. Please feel free to make pull requests for features, or add new feature requests/bugs through the issues tab, for anything you would like to see be added.
+It is my hope that this project can be supported by the community, I am very open to ideas and pull requests. I do no plan to make a profit off of this project, other than through donations, as well as the increased usage of BCH. Please feel free to make pull requests for features, or add new feature requests/bugs through the issues tab, for anything you would like to see added.
 
 
 Thank you!
+
+Tip Jar
+-------------
+bitcoincash:qqsdkyk424dk5n03ranfpwa6fmfsuc26jszxth2qyk
