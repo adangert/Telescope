@@ -208,10 +208,13 @@
                 balance = result;
                 if (balanceListener) balanceListener(balance);
                 // Check blockchain.info for the current balance
-                util.get('https://bch-insight.bitpay.com/api/addr/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
+                //https://bitcoincash.blockexplorer.com/api/addr/
+                //https://bch-insight.bitpay.com/api/addr/
+                util.get('https://bitcoincash.blockexplorer.com/api/addr/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
                     var json = JSON.parse(response);
-                    //bitpay, only balanceSat
-                    balance = json["balanceSat"]; //+ json["unconfirmedBalanceSat"];
+                    //bitpay, only balanceSat, blockdozer and blockexplorer use both
+
+                    balance = json["balanceSat"] + json["unconfirmedBalanceSat"];
 
                     return preferences.setLastBalance(balance);
                 }).then(function () {
@@ -355,7 +358,7 @@
                 // Get all unspent outputs from blockchain.info to generate our inputs
                 //https://bch-insight.bitpay.com/api/addr/
                 //https://blockdozer.com/insight-api/addr/
-                util.getJSON('https://bch-insight.bitpay.com/api/addr/' + address+'/utxo?nocache='+ new Date().getTime()).then(function (json) {
+                util.getJSON('https://bitcoincash.blockexplorer.com/api/addr/' + address+'/utxo?nocache='+ new Date().getTime()).then(function (json) {
                     var inputs = json,
                         selectedOuts = [];
                         //eckey = new Bitcoin.ECKey(decryptedPrivateKey),
@@ -369,19 +372,22 @@
                     // Gather enough inputs so that their value is greater than or equal to the total cost
                       var new_utxo = false;
                       var multi_utxo = false;
-                    for (var i = 0; i < inputs.length; i++) {
-                        if(inputs[i].confirmations === 0){
-                          if(new_utxo === false){
-                          new_utxo = true;
-                            }else{
-                              multi_utxo = true;
-                            }
-                        }
-                      }
+
+                      //only use when utxo set doesn't update immediately
+                    // for (var i = 0; i < inputs.length; i++) {
+                    //     if(inputs[i].confirmations === 0){
+                    //       if(new_utxo === false){
+                    //       new_utxo = true;
+                    //         }else{
+                    //           multi_utxo = true;
+                    //         }
+                    //     }
+                    //   }
 
 
                     for (var i = 0; i < inputs.length; i++) {
-                        if((new_utxo === false && inputs[i].confirmations > 0) || (new_utxo && inputs[i].confirmations === 0)){
+                      //make sure to set to > 0, if utxo set doesn't update automatically
+                        if((new_utxo === false && inputs[i].confirmations >= 0) || (new_utxo && inputs[i].confirmations === 0)){
                           selectedOuts.push(inputs[i]);
                           availableValue = availableValue.add(new bigInt('' + inputs[i].satoshis, 10));
 
@@ -481,7 +487,7 @@
                         console.log(transaction.toString());
                         console.log(data);
                         //https://blockdozer.com/insight-api/tx/send
-                        util.post('https://bch-insight.bitpay.com/api/tx/send', data).then(function () {
+                        util.post('https://bitcoincash.blockexplorer.com/api/tx/send', data).then(function () {
                             // Notify the balance listener of the changed amount immediately,
                             // but don't set the balance since the transaction will be processed by the websocket
                             //if (balanceListener) balanceListener(balance - amount - fee);
