@@ -28,7 +28,7 @@ $(document).ready(function () {
   //       });
         var BCHUnits = 'BCH',
         BCHMultiplier = SATOSHIS;
-        
+
 
     function setupWallet() {
         wallet.restoreAddress().then(setQRCodes,
@@ -207,14 +207,15 @@ $(document).ready(function () {
      */
     $('#setPassword').click(function () {
         $('#passwordMismatch').hide();
+        $('#passwordNotLongEnough').hide();
         $('#setPasswordIncorrect').hide();
         $('#setPasswordBlank').hide();
         if (wallet.isEncrypted()) {
             $('#removePasswordDiv').show();
             $('#setPasswordPassword').show().val(null);
         } else {
-            $('#removePasswordDiv').hide();
-            $('#setPasswordPassword').hide().val(null);
+        $('#removePasswordDiv').hide();
+        $('#setPasswordPassword').hide().val(null);
         }
         $('#newPassword').show().val(null);
         $('#confirmNewPassword').show().val(null);
@@ -237,6 +238,7 @@ $(document).ready(function () {
             newPassword = $('#newPassword').val(),
             confirmNewPassword = $('#confirmNewPassword').val();
         var validInput = true;
+
         if ((wallet.isEncrypted() && !password) || (!$('#removePassword').is(':checked') && (!newPassword || !confirmNewPassword))) {
             validInput = false;
             $('#setPasswordBlank').slideDown();
@@ -249,6 +251,13 @@ $(document).ready(function () {
             $('#passwordMismatch').slideDown();
         } else {
             $('#passwordMismatch').slideUp();
+        }
+
+        if (validInput && (newPassword.length <= 6 && newPassword.length > 0)){
+            validInput = false;
+            $('#passwordNotLongEnough').slideDown();
+        } else {
+            $('#passwordNotLongEnough').slideUp();
         }
 
         if (validInput && wallet.isEncrypted() && !wallet.validatePassword(password)) {
@@ -405,15 +414,16 @@ $(document).ready(function () {
      */
     $('#generateNewWallet').click(function () {
         $('#generateNewWalletPasswordIncorrect').hide();
-        if (wallet.isEncrypted()) {
-            $('#generateNewWalletPassword').show().val(null);
-        } else {
-            $('#generateNewWalletPassword').hide();
-        }
+        // if (wallet.isEncrypted()) {
+        //     $('#generateNewWalletPassword').show().val(null);
+        // } else {
+        //     $('#generateNewWalletPassword').hide();
+        // }
         $('#generateNewWalletModal').modal().show();
     });
 
     $('#generateNewWalletConfirm').click(function () {
+      wallet.removePassword();
         wallet.generateAddress($('#generateNewWalletPassword').val()).then(function () {
             setupWallet();
             $('#successAlertLabel').text('New wallet generated.');

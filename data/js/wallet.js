@@ -50,10 +50,17 @@
             balanceListener = listener;
         },
 
+        removePassword: function(){
+          // privateKey = decryptedPrivateKey;
+          isEncrypted = false;
+          preferences.setIsEncrypted(isEncrypted);
+          // preferences.setPrivateKey(privateKey);
+        },
+
         // Create a new address
         generateAddress: function (password) {
             return new Promise(function (resolve, reject) {
-                if (ret.validatePassword(password)) {
+                // if (ret.validatePassword(password)) {
                     var pair = new bch.PrivateKey()
                     var privkey = pair.toString();
                     //address = privateKey.toAddress().toString();
@@ -76,9 +83,9 @@
                         updateFee();
                         resolve();
                     });
-                } else {
-                    reject(Error('Incorrect password'));
-                }
+                // } else {
+                //     reject(Error('Incorrect password'));
+                // }
             });
         },
 
@@ -309,6 +316,34 @@
         });
     };
 
+
+
+    // wallet.prototype.removePassword = function () {
+    //     return new Promise(function (resolve, reject) {
+    //         // Make sure the previous password is correct
+    //         // var decryptedPrivateKey = ret.getDecryptedPrivateKey(password);
+    //         // if (decryptedPrivateKey) {
+    //             // If we have a new password we use it, otherwise leave cleartext
+    //             // if (newPassword) {
+    //             //     if (typeof chrome !== 'undefined') {
+    //             //         privateKey = CryptoJS.AES.encrypt(decryptedPrivateKey, newPassword);
+    //             //     } else {
+    //             //         privateKey = JSON.parse(CryptoJS.AES.encrypt(decryptedPrivateKey, newPassword, {format:jsonFormatter}));
+    //             //     }
+    //             //     isEncrypted = true;
+    //             // } else {
+    //                 privateKey = decryptedPrivateKey;
+    //                 isEncrypted = false;
+    //             // }
+    //             // Save the encrypted private key
+    //             // Passwords are never saved anywhere
+    //             Promise.all([preferences.setIsEncrypted(isEncrypted), preferences.setPrivateKey(privateKey)]).then(resolve);
+    //         // } else {
+    //         //     reject(Error('Incorrect password'));
+    //         // }
+    //     });
+    // };
+
     // function get_new_address(old){
     //   return old;
     // }
@@ -318,6 +353,8 @@
             var decryptedPrivateKey = ret.getDecryptedPrivateKey(password);
             if (decryptedPrivateKey) {
                 // Get all unspent outputs from blockchain.info to generate our inputs
+                //https://bch-insight.bitpay.com/api/addr/
+                //https://blockdozer.com/insight-api/addr/
                 util.getJSON('https://bch-insight.bitpay.com/api/addr/' + address+'/utxo?nocache='+ new Date().getTime()).then(function (json) {
                     var inputs = json,
                         selectedOuts = [];
@@ -336,16 +373,15 @@
                         if(inputs[i].confirmations === 0){
                           if(new_utxo === false){
                           new_utxo = true;
-                        }else{
-                          multi_utxo = true;
-                        }
+                            }else{
+                              multi_utxo = true;
+                            }
                         }
                       }
 
 
-
                     for (var i = 0; i < inputs.length; i++) {
-                        if((new_utxo === false && inputs[i].confirmations >= 0) || (new_utxo === true && inputs[i].confirmations === 0)){
+                        if((new_utxo === false && inputs[i].confirmations > 0) || (new_utxo && inputs[i].confirmations === 0)){
                           selectedOuts.push(inputs[i]);
                           availableValue = availableValue.add(new bigInt('' + inputs[i].satoshis, 10));
 
@@ -358,6 +394,9 @@
                           }
 
                           legacy_utxo_address = bch.Address.fromString(new_address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
+
+                          //inputs[i].address
+
                           var utxo = {
                           'txId' : inputs[i].txid,
                           'outputIndex' : inputs[i].vout,
@@ -365,6 +404,7 @@
                           'script' : inputs[i].scriptPubKey,
                           'satoshis' : inputs[i].satoshis
                         };
+                          console.log(utxo);
                           utxos.push(utxo);
                           if (availableValue.compareTo(txValue) >= 0) break;
 
@@ -377,7 +417,7 @@
                     // console.log("new utxo is ");
                     // console.log(new_utxo);
                     // console.log(availableValue.compareTo(txValue));
-                    if (multi_utxo === true){
+                    if (multi_utxo){
                       reject(Error('wait for confirmations'));
                     }else if (new_utxo && availableValue.compareTo(txValue) < 0) {
                         reject(Error('wait for confirmations'));
@@ -389,16 +429,12 @@
 
                         var legacy_address = bch.Address.fromString(address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
                         var legacy_sendaddress = bch.Address.fromString(sendAddress,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
-
                         var transaction = new bch.Transaction()
                           .from(utxos) // using the last UXTO to sign the next transaction
                           .to(legacy_sendaddress, Number(amount)) // Send 10000 Satoshi's
                           .fee(Number(fee))
                           .change(legacy_address)
                           .sign(decryptedPrivateKey);
-
-
-
 
 
                         // Add all our unspent outputs to the transaction as the inputs
@@ -444,6 +480,7 @@
                         //var insight = new explorer.Insight('https://bch-insight.bitpay.com');
                         console.log(transaction.toString());
                         console.log(data);
+                        //https://blockdozer.com/insight-api/tx/send
                         util.post('https://bch-insight.bitpay.com/api/tx/send', data).then(function () {
                             // Notify the balance listener of the changed amount immediately,
                             // but don't set the balance since the transaction will be processed by the websocket
