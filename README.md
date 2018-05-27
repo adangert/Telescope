@@ -2,6 +2,7 @@ Bitcoin Cash Wallet for Chrome/Firefox
 =============
 
 Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.
+bitpay.com and moneybutton.com buttons now supported.
 
 [Video](https://youtu.be/JXGEL-mEXhY) of how to use
 
