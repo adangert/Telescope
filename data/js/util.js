@@ -13,12 +13,13 @@
 
     var util = function () {},
         // Promisified ajax request
-        request = function (url, type, data) {
+        request = function (url, type, data, headers) {
             return new Promise(function (resolve, reject) {
                 var req = new XMLHttpRequest();
                 //req.setRequestHeader('Cache-Control', 'no-cache');
                 req.open((type ? type : 'GET'), url, true);
                 // req.setRequestHeader('cache-control', 'no-cache, must-revalidate, post-check=0, pre-check=0');
+
                 req.setRequestHeader('Cache-Control', 'private');
                 req.setRequestHeader('Cache-Control','max-age=0');
                 req.setRequestHeader('Cache-Control','no-store');
@@ -36,8 +37,10 @@
                 req.onerror = function () {
                     reject(Error('Network error'));
                 }
-                if (type === 'POST') {
-                    req.setRequestHeader('Content-type', 'application/json');
+                for (var key in headers) {
+                    if (headers.hasOwnProperty(key)) {
+                        req.setRequestHeader(key, headers[key]);
+                    }
                 }
                 req.send(data);
             });
@@ -52,15 +55,31 @@
             }
         },
 
+        getHeaders: function(url,headers){
+          if (typeof chrome !== 'undefined') {
+              return request(url, 'GET', {}, headers);
+          } else {
+              return ret.message('get', {}, {url:url, content:headers});
+          }
+        },
+
         get: function (url) {
             return request(url);
         },
 
         post: function (url, data) {
             if (typeof chrome !== 'undefined') {
-                return request(url, 'POST', data);
+                return request(url, 'POST', data, {});
             } else {
                 return ret.message('post', {url:url, content:data});
+            }
+        },
+
+        postHeaders: function (url, data, headers) {
+            if (typeof chrome !== 'undefined') {
+                return request(url, 'POST', data, headers);
+            } else {
+                return ret.message('post', {url:url, content:data}, headers);
             }
         },
 

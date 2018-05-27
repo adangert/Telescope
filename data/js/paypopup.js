@@ -18,6 +18,7 @@ $(document).ready(function () {
     clickX,
     clickY,
     port = null;
+    one_popup = true;
 
     // var req = new XMLHttpRequest();
     // req.open('GET', 'https://blockdozer.com/insight-api/utils/estimatefee/', false);
@@ -67,13 +68,66 @@ $(document).ready(function () {
         });
     }
 
+    $('body').on('mouseover', 'iframe', function (e) {
+      var src = $(this).attr('src');
+      if (/https:\/\/www.moneybutton.com.*/.test(src)) {
+        var moneybutton_address = src.match(/(q|p)[0-9a-zA-Z]{40,44}/)[0]
+        if(one_popup){
+          one_popup = false;
+        showPopup(moneybutton_address, null, this.getBoundingClientRect());
+        }
+      }
+    });
+
+
+    $('body').on('mouseover', 'a', function (e) {
+      var href = $(this).attr('href');
+      var rect =  this.getBoundingClientRect();
+      if ( document.URL.includes("bitpay.com") ) {
+        if (/bitcoincash:\?r=https:\/\/bitpay.com\/i\/[0-9a-zA-Z]{20,46}/.test(href)) {
+          var amount = 0
+          // return false;
+          var bit_pay_address = href.match(/https.*/)[0]
+          var what = util.getHeaders(bit_pay_address,{"Accept":"application/payment-request"}).then(function (data) {
+              var json_data = JSON.parse(data)
+              amount = json_data["outputs"][0]["amount"];
+              if(one_popup){
+                one_popup = false;
+              showPopup(json_data["outputs"][0]["address"], json_data["outputs"][0]["amount"], rect,bit_pay_address);
+              }
+              resolve();
+          }, function () {
+              reject(Error('Unknown error'));
+          });
+          // console.log(return_json);
+          return false;
+        }
+      }
+    });
     // Intercept all anchor clicks and determine if they are bitcoin pay links
     $('body').on('click', 'a', function (e) {
         var href = $(this).attr('href');
+        var rect =  this.getBoundingClientRect();
+        // Regex test for bitpay links
+        if (/bitcoincash:\?r=https:\/\/bitpay.com\/i\/[0-9a-zA-Z]{20,46}/.test(href)) {
+          var amount = 0
+          // return false;
+          var bit_pay_address = href.match(/https.*/)[0]
+          var what = util.getHeaders(bit_pay_address,{"Accept":"application/payment-request"}).then(function (data) {
+              var json_data = JSON.parse(data)
+              amount = json_data["outputs"][0]["amount"];
+              showPopup(json_data["outputs"][0]["address"], json_data["outputs"][0]["amount"], rect,bit_pay_address);
+              resolve();
+          }, function () {
+              reject(Error('Unknown error'));
+          });
+          return false;
+        }
+
 
         // Regex test for bitcoin pay link
-        if (/(bitcoincash:)?q[0-9a-z]{38,46}/.test(href)) {
-            var addresses = href.match(/(bitcoincash:)?q[0-9a-z]{38,46}/);
+        if (/(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}/.test(href)) {
+            var addresses = href.match(/(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}/);
             var address = null;
             if (addresses) {
                 address = addresses[0];
@@ -90,7 +144,8 @@ $(document).ready(function () {
         return true;
     });
 
-    function showPopup(address, amount, rect) {
+    function showPopup(address, amount, rect, bitpay_url, bitpay_fee) {
+        // removeFrame();
         util.iframe('paypopup.html').then(function (iframe) {
 
             iframe.style.height = '210px';
@@ -130,7 +185,7 @@ $(document).ready(function () {
             });
 
             // Check if the address is actually valid
-            if (!address || !/^(bitcoincash:)?q[0-9a-z]{38,46}$/.test(String(address))) {
+            if (!address || !/^(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}$/.test(String(address))) {
                 address = null;
             } else {
                 try {
@@ -198,7 +253,7 @@ $(document).ready(function () {
                 var newAddress;
                 if (!address) {
                     newAddress = $iframe.find('#address').val();
-                    if (!/^(bitcoincash:)?q[0-9a-z]{38,46}$/.test(String(newAddress))) {
+                    if (!/^(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}$/.test(String(newAddress))) {
                         validAddress = false;
                     } else {
                         try {
@@ -239,7 +294,11 @@ $(document).ready(function () {
                     $iframe.find('#password').parent().fadeOut('fast');
                     $iframe.find('#button').fadeOut('fast', function () {
                         $iframe.find('#progress').fadeIn('fast', function () {
-                            wallet.send(newAddress, newAmount, wallet.getFee(), $iframe.find('#password').val()).then(function () {
+                          var use_fee = wallet.getFee();
+                           if (typeof bitpay_fee != 'undefined'){
+                             use_fee = bitpay_fee;
+                           }
+                            wallet.send(newAddress, newAmount, use_fee, $iframe.find('#password').val(),bitpay_url).then(function () {
                                 $iframe.find('#progress').fadeOut('fast', function () {
                                     $iframe.find('#successAlert').fadeIn('fast').delay(1000).fadeIn('fast', removeFrame);
                                 });
@@ -272,6 +331,7 @@ $(document).ready(function () {
             $(document).on('click.wallet contextmenu.wallet', removeFrame);
 
             function removeFrame() {
+                one_popup = true;
                 $(document).off('click.wallet contextmenu.wallet');
                 $(iframe).fadeOut('fast', function () {
                     $(this).remove();

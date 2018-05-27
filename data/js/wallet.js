@@ -351,7 +351,7 @@
     //   return old;
     // }
     // Send bitcoin from the wallet to another address
-    wallet.prototype.send = function (sendAddress, amount, fee, password) {
+    wallet.prototype.send = function (sendAddress, amount, fee, password, bitpay_url) {
         return new Promise(function (resolve, reject) {
             var decryptedPrivateKey = ret.getDecryptedPrivateKey(password);
             if (decryptedPrivateKey) {
@@ -481,13 +481,33 @@
                         // // Push the transaction to blockchain.info
 
                       //  var data = 'tx=' + Crypto.util.bytesToHex(sendTx.serialize());
+
+                      if (typeof bitpay_url != 'undefined'){
+                        var data = JSON.stringify({'currency':'BCH','transactions': [transaction.toString()]});
+                        //var data = 'rawtx='+ transaction.toString();
+                        //var insight = new explorer.Insight('https://bch-insight.bitpay.com');
+                        console.log(transaction.toString());
+                        console.log(data);
+                        var headers = {'Content-Type':'application/payment'}
+                        util.postHeaders(bitpay_url, data, headers).then(function (response) {
+                          console.log(response);
+                           resolve();
+                        }, function (response) {
+                          console.log(response);
+                           reject(Error('Unknown error'));
+                        });
+
+
+                      }else {
+
                          var data = JSON.stringify({'rawtx': transaction.toString()});
                         //var data = 'rawtx='+ transaction.toString();
                         //var insight = new explorer.Insight('https://bch-insight.bitpay.com');
                         console.log(transaction.toString());
                         console.log(data);
+                        headers = {'Content-type': 'application/json'};
                         //https://blockdozer.com/insight-api/tx/send
-                        util.post('https://bitcoincash.blockexplorer.com/api/tx/send', data).then(function () {
+                        util.postHeaders('https://bitcoincash.blockexplorer.com/api/tx/send', data, headers).then(function () {
                             // Notify the balance listener of the changed amount immediately,
                             // but don't set the balance since the transaction will be processed by the websocket
                             //if (balanceListener) balanceListener(balance - amount - fee);
@@ -495,7 +515,7 @@
                         }, function () {
                             reject(Error('Unknown error'));
                         });
-
+                      }
 
 
                     }

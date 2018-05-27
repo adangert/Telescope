@@ -134,7 +134,7 @@ $(document).ready(function () {
             $('#amountAlert').slideDown();
         }
 
-        var regex = /^(bitcoincash:)?q[0-9a-z]{38,46}$/;
+        var regex = /^(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}$/;
         var validAddress = true;
         if (!regex.test(String(address))) {
             validAddress = false;

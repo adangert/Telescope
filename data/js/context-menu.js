@@ -23,7 +23,7 @@
         // If we're a text node we check if it contains a bitcoin address
         if (node.children.length == 0 && node['textContent']) {
             var text = node['textContent'];
-            var matches = text.match(/(bitcoincash:)?q[0-9a-z]{38,46}/);
+            var matches = text.match(/(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}/);
             if (matches) {
                 try {
                     address = '';

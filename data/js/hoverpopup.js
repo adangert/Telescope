@@ -30,7 +30,7 @@ $(document).ready(function () {
 
     // Check all text nodes for addresses
     for (var i = textNodes.length-1; i>=0; i--) {
-        var matches = textNodes[i]['textContent'].match(/(bitcoincash:)?q[0-9a-z]{38,46}/g);
+        var matches = textNodes[i]['textContent'].match(/(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}/g);
         if (matches) {
             var text = textNodes[i]['textContent'],
                 hasMatch = false;
