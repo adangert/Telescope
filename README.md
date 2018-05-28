@@ -1,4 +1,4 @@
-Bitcoin Cash Wallet for Chrome/Firefox
+Telescope: a Bitcoin Cash Wallet for Chrome/Firefox
 =============
 
 Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.
