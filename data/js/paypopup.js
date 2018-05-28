@@ -70,7 +70,7 @@ $(document).ready(function () {
 
     $('body').on('mouseover', 'iframe', function (e) {
       var src = $(this).attr('src');
-      if (/https:\/\/www.moneybutton.com.*/.test(src)) {
+      if (/^https:\/\/www.moneybutton.com.*/.test(src)) {
         var moneybutton_address = src.match(/(q|p)[0-9a-zA-Z]{40,44}/)[0]
         if(one_popup){
           one_popup = false;
@@ -109,7 +109,7 @@ $(document).ready(function () {
         var href = $(this).attr('href');
         var rect =  this.getBoundingClientRect();
         // Regex test for bitpay links
-        if (/bitcoincash:\?r=https:\/\/bitpay.com\/i\/[0-9a-zA-Z]{20,46}/.test(href)) {
+        if (/^bitcoincash:\?r=https:\/\/bitpay.com\/i\/[0-9a-zA-Z]{20,46}/.test(href)) {
           var amount = 0
           // return false;
           var bit_pay_address = href.match(/https.*/)[0]
@@ -126,7 +126,7 @@ $(document).ready(function () {
 
 
         // Regex test for bitcoin pay link
-        if (/(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}/.test(href)) {
+        if (/^(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}/.test(href)) {
             var addresses = href.match(/(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}/);
             var address = null;
             if (addresses) {
