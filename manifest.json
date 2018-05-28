@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Bitcoin Cash Wallet",
+    "name": "Telescope BitcoinCash WebWallet",
     "author": "Aaron Angert",
-    "description": "Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.",
+    "description": "A Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.",
     "version": "1.9",
 
     "icons": {
@@ -49,7 +49,7 @@
               "19": "data/bitcoin19.png",
               "38": "data/bitcoin38.png"
         },
-        "default_title": "BitcoinCashWallet",
+        "default_title": "Telescope",
         "default_popup": "data/index.html"
     },
     "applications": {
