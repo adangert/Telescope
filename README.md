@@ -14,8 +14,6 @@ bitpay.com and moneybutton.com buttons now supported.
 
 [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/bitcoin-cash-wallet/)
 
-This is a forked project from Andrew Toth's Bitcoin Wallet here: https://github.com/andrewtoth/BitcoinWallet
-
 Security
 --------
 
