@@ -1,4 +1,8 @@
-Telescope: a Bitcoin Cash Wallet for Chrome/Firefox
+<p align="center">
+  <img src="telescope_logo.png" width="400" alt="Joustmania Logo"/>
+</p>
+
+Telescope: a Bitcoin Cash Wallet for Chrome and Firefox
 =============
 
 Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.
