@@ -434,19 +434,12 @@
 
                         var legacy_address = bch.Address.fromString(address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
                         var legacy_sendaddress = bch.Address.fromString(sendAddress,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
-                        console.log("the fee is ")
-                        console.log(fee)
-                        console.log(opreturn)
-                        console.log(legacy_sendaddress)
-                        console.log(legacy_address)
-                        console.log(amount)
                         if(typeof opreturn === 'undefined')
                         {
-                          console.log('opreturn is undefined')
                           var transaction = new bch.Transaction()
                           .from(utxos) // using the last UXTO to sign the next transaction
                           .to(legacy_sendaddress, Number(amount)) // Send 10000 Satoshi's
-                          .fee(Number(fee))
+                          .feePerKb(Number(fee))
                           .change(legacy_address)
                           .sign(decryptedPrivateKey);
                         }
@@ -455,15 +448,12 @@
                           //for memo.cash and blockpress
                           var script = bch.Script.buildDataOut(opreturn,'hex');
                           script.chunks[1].opcodenum = 2;
-                          console.log("script is");
-                          console.log(script);
                           var out = new bch.Transaction.Output({script: script , satoshis: 0})
-                          console.log(out);
                           var transaction = new bch.Transaction()
                             .from(utxos) // using the last UXTO to sign the next transaction
                             .addOutput(out)
                             .to(legacy_sendaddress, Number(amount)) // Send 10000 Satoshi's
-                            .fee(Number(fee))
+                            .feePerKb(Number(fee))
                             .change(legacy_address)
                             .sign(decryptedPrivateKey);
 
