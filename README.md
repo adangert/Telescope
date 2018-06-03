@@ -14,6 +14,8 @@ bitpay.com and moneybutton.com buttons now supported.
 
 [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/bitcoin-cash-wallet/)
 
+[Telegram](https://t.me/telescopebch)
+
 Security
 --------
 
