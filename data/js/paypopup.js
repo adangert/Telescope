@@ -149,7 +149,7 @@ $(document).ready(function () {
         util.iframe('paypopup.html').then(function (iframe) {
 
             iframe.style.height = '210px';
-            iframe.style.width = '210px';
+            iframe.style.width = '235px';
             var offset = {}
             if (rect) {
                 offset.left = Number(rect.left) + Number(window.pageXOffset) + Number(rect.right-rect.left)/2 - 85;
@@ -174,15 +174,40 @@ $(document).ready(function () {
 
             preferences.getBCHUnits().then(function (units) {
                 BCHUnits = units;
-                if (units === 'µBCH') {
-                    BCHMultiplier = SATOSHIS / 1000000;
-                } else if (units === 'mBCH') {
-                    BCHMultiplier = SATOSHIS / 1000;
-                } else {
-                    BCHMultiplier = SATOSHIS;
-                }
-                $iframe.find('#amount').attr('placeholder', 'Amount (' + BCHUnits + ')').attr('step', 100000 / BCHMultiplier);
+                BCHMultiplier = SATOSHIS;
+                // if (units === 'µBCH') {
+                //     BCHMultiplier = SATOSHIS / 1000000;
+                // } else if (units === 'mBCH') {
+                //     BCHMultiplier = SATOSHIS / 1000;
+                // } else {
+                //     BCHMultiplier = SATOSHIS;
+                // }
             });
+
+            preferences.getCurrency().then(function (units) {
+              $iframe.find('#amount').attr('placeholder', 'Amount (' + units + ')').attr('step', 100000 / BCHMultiplier);
+              // console.log(currencyManager.formatPureAmount(0.25));
+              // $iframe.find('#button1').text(currencyManager.formatPureAmount(0.25));
+              // .attr('placeholder', 'Amount (' + units + ')').attr('step', 100000 / BCHMultiplier);
+
+            });
+
+            currencyManager.addSymbol(0.25).then(function(amount){
+              $iframe.find('#button1').text(amount);
+            });
+
+            currencyManager.addSymbol(0.5).then(function(amount){
+              $iframe.find('#button2').text(amount);
+            });
+
+            currencyManager.addSymbol(1).then(function(amount){
+              $iframe.find('#button3').text(amount);
+            });
+
+            currencyManager.addSymbol(5).then(function(amount){
+              $iframe.find('#button4').text(amount);
+            });
+
 
             // Check if the address is actually valid
             if (!address || !/^(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}$/.test(String(address))) {
@@ -214,16 +239,18 @@ $(document).ready(function () {
             // Hide the amount field if we have a valid amount
             if (amount) {
                 $iframe.find('#amount').parent().hide();
+                $iframe.find('#default-tip').hide();
                 updateButton(amount);
             } else {
                 $iframe.find('#amount').on('keyup change', function () {
-                    var value = Math.floor(Number($iframe.find('#amount').val() * BCHMultiplier));
+                    var value = $iframe.find('#amount').val();//Math.floor(Number($iframe.find('#amount').val() * BCHMultiplier));
                     updateButton(value);
                 });
             }
 
             function updateButton(value) {
-                currencyManager.formatAmount(value).then(function (formattedMoney) {
+
+                currencyManager.formatBCH(value).then(function (formattedMoney) {
                     var text = 'Send';
                     if (value > 0) {
                         text += ' (' + formattedMoney + ')';
@@ -234,12 +261,35 @@ $(document).ready(function () {
 
             $iframe.find('#main').fadeIn('fast');
 
-            $iframe.find('#button').click(function () {
+            $iframe.find('#button').click(function(){sendAmount()} );
+            $iframe.find('#button1').click(function(){sendAmount(0.25)} );
+            $iframe.find('#button2').click(function(){sendAmount(0.5)} );
+            $iframe.find('#button3').click(function(){sendAmount(1)} );
+            $iframe.find('#button4').click(function(){sendAmount(5)} );
+
+            $(document).on('click.wallet contextmenu.wallet', removeFrame);
+
+            function removeFrame() {
+                one_popup = true;
+                $(document).off('click.wallet contextmenu.wallet');
+                $(iframe).fadeOut('fast', function () {
+                    $(this).remove();
+                });
+            }
+
+            function sendAmount(amountToSend){
                 var validAmount = true,
                     validAddress = true,
-                    newAmount;
+                    newAmount,
+                    sending_amount = 0;
+                if(typeof amountToSend != 'undefined'){
+                  sending_amount = amountToSend;
+                }else{
+                  sending_amount = $iframe.find('#amount').val()
+                }
+                currencyManager.BCHvalue(sending_amount).then(function(newBchAmount){
                 if (!amount) {
-                    newAmount = Math.floor(Number($iframe.find('#amount').val() * BCHMultiplier));
+                    newAmount = Math.floor(Number(newBchAmount * BCHMultiplier));
                 } else {
                     newAmount = amount;
                 }
@@ -273,7 +323,6 @@ $(document).ready(function () {
                 } else {
                     newAddress = address;
                 }
-
                 $iframe.find('#amount').parent().removeClass('has-error');
                 $iframe.find('#address').parent().removeClass('has-error');
                 $iframe.find('#password').parent().removeClass('has-error');
@@ -289,6 +338,7 @@ $(document).ready(function () {
                 } else {
                     $(document).off('click.wallet contextmenu.wallet');
                     $iframe.find('#errorAlert').slideUp();
+                    $iframe.find('#default-tip').fadeOut('fast');
                     $iframe.find('#amount').parent().fadeOut('fast');
                     $iframe.find('#address').parent().fadeOut('fast');
                     $iframe.find('#password').parent().fadeOut('fast');
@@ -326,17 +376,21 @@ $(document).ready(function () {
                         });
                     });
                 }
-            });
-
-            $(document).on('click.wallet contextmenu.wallet', removeFrame);
-
-            function removeFrame() {
-                one_popup = true;
-                $(document).off('click.wallet contextmenu.wallet');
-                $(iframe).fadeOut('fast', function () {
-                    $(this).remove();
                 });
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
         });
     }
 

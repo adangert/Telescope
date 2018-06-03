@@ -85,8 +85,73 @@
                 }
                 return text;
             });
+        },
+
+        formatPureAmount: function (value) {
+            return Promise.all([preferences.getExchangeRate(), this.getSymbol()]).then(function (values) {
+                var rate = values[0],
+                    symbol = values[1][0],
+                    beforeOrAfter = values[1][1],
+                    SATOSHIS = 100000000,
+                    text = (value).formatMoney(2);
+                if (beforeOrAfter === 'before') {
+                    text = symbol + text;
+                } else {
+                    text += symbol;
+                }
+                return text;
+            });
+        },
+
+        addSymbol: function (value) {
+            return Promise.all([preferences.getExchangeRate(), this.getSymbol()]).then(function (values) {
+                var rate = values[0],
+                    symbol = values[1][0],
+                    beforeOrAfter = values[1][1],
+                    SATOSHIS = 100000000,
+                    text = (value);
+                if (beforeOrAfter === 'before') {
+                    text = symbol + text;
+                } else {
+                    text += symbol;
+                }
+                return text;
+            });
+        },
+
+
+        BCHvalue: function (value){
+            return Promise.all([preferences.getExchangeRate(), this.getSymbol()]).then(function (values) {
+                var rate = values[0],
+                    symbol = values[1][0],
+                    beforeOrAfter = values[1][1],
+                    SATOSHIS = 100000000,
+                    text = (value / rate).toFixed(8);
+
+                return text;
+            });
+        },
+
+        formatBCH: function (value) {
+            return Promise.all([preferences.getExchangeRate(), this.getSymbol()]).then(function (values) {
+                var rate = values[0],
+                    symbol = values[1][0],
+                    beforeOrAfter = values[1][1],
+                    SATOSHIS = 100000000,
+                    text = (value / rate).toFixed(8);
+                // if (beforeOrAfter === 'before') {
+                //     text = symbol + text;
+                // } else {
+                //     text += symbol;
+                // }
+                text += " BCH"
+                return text;
+            });
         }
     };
+
+
+
 
     Number.prototype.formatMoney = function(c, d, t){
         var n = this,

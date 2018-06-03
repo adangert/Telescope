@@ -73,7 +73,7 @@
             <div class="input-group">
                 <input type="number" min="0" step="0.001" class="form-control form-control-sm" id="amount" placeholder="(incl. 0.00001 BCH fee)">
                 <div class="input-group-append">
-                  <span id="sendUnit" class="input-group-text">BCH</span>
+                  <span id="sendUnit" class="input-group-text">USD</span>
                   <button id="sendButton" type="submit" class="btn btn-primary">Send</button>
 
                   </div>
@@ -86,7 +86,10 @@
             Balance: <span id="balance">0 BCH</span> <span id="balancemon">0 USD,</span>
 
             <button type="button" id="addressPopover" class="btn btn-outline-primary" data-toggle="modal" data-target="#receiveModal">
-                Receive&nbsp;&nbsp;<span class="glyphicon glyphicon-qrcode"></span>
+                Receive
+            </button>
+            <button type="button" id="sendPopover" class="btn btn-outline-primary" data-toggle="modal" data-target="#postModal">
+                Post
             </button>
         </div>
     </div>
@@ -107,6 +110,52 @@
                 <h5 id="textAddress" class="text-center">
 
                 </h5>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Post Modal -->
+<div class="modal fade" id="postModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Post</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+            </div>
+            <div id="NeedOneField" class="alert alert-danger">
+                One field required.
+            </div>
+            <div class="modal-body">
+              <!-- <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="memocheck" value="option1">
+                      <label class="form-check-label" for="memocheck">memo</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="blockpresscheck" value="option2">
+                      <label class="form-check-label" for="blockpresscheck">blockpress</label>
+                    </div> -->
+
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="memocheck" value="option2">
+                      <label class="form-check-label" for="inlineRadio2">memo</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="blockpresscheck" value="option3">
+                      <label class="form-check-label" for="inlineRadio3">blockpress</label>
+                    </div>
+              <div class="input-group mb-1">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">@</div>
+                  </div>
+                  <input type="text" class="form-control form-control-sm" id="ChangeUsername" placeholder="Change Username">
+                </div>
+              <div class="form-group" >
+                <label for="comment" id="contentLabel">Post Content: (207 characters)</label>
+                <textarea class="form-control" rows="3" id="postContent" maxlength="207"></textarea>
+                </div>
+                <button type="button" id="postMessage" class="btn btn-outline-primary">Post</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

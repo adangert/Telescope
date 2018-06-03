@@ -13,6 +13,7 @@ $(document).ready(function () {
     // Setup the wallet, page values and callbacks
     var val = '',
         address = '',
+        opreturn = undefined,
 
         SATOSHIS = 100000000;
         var FEE = wallet.getFee();
@@ -50,9 +51,10 @@ $(document).ready(function () {
     setupWallet();
 
     $('#amount').on('keyup change', function () {
-        val = Math.floor(Number($(this).val() * BCHMultiplier));
+      val = $(this).val();
+        //val = Math.floor(Number($(this).val() * BCHMultiplier));
         if (val > 0) {
-            currencyManager.formatAmount(val).then(function (formattedMoney) {
+            currencyManager.formatBCH(val).then(function (formattedMoney) {
                 var text = 'Amount: ' + formattedMoney;
                 $('#amountLabel').text(text);
             });
@@ -63,20 +65,33 @@ $(document).ready(function () {
 
     function setBCHUnits(units) {
         BCHUnits = units;
-        if (units === 'µBCH') {
-            BCHMultiplier = SATOSHIS / 1000000;
-        } else if (units === 'mBCH') {
-            BCHMultiplier = SATOSHIS / 1000;
-        } else {
-            BCHMultiplier = SATOSHIS;
-        }
+        BCHMultiplier = SATOSHIS;
+        // if (units === 'µBCH') {
+        //     BCHMultiplier = SATOSHIS / 1000000;
+        // } else if (units === 'mBCH') {
+        //     BCHMultiplier = SATOSHIS / 1000;
+        // } else {
+        //     BCHMultiplier = SATOSHIS;
+        // }
 
         setBalance(wallet.getBalance());
         setFee(wallet.getFee());
-        $('#sendUnit').html(BCHUnits);
+        // $('#sendUnit').html(BCHUnits);
+        // $('#amountLabel').text('Amount:');
+    }
+
+    function setCurrencyUnits(units) {
+        CurrencyUnits = units;
+
+        // setBalance(wallet.getBalance());
+        // setFee(wallet.getFee());
+        $('#sendUnit').html(CurrencyUnits);
         $('#amountLabel').text('Amount:');
     }
+
+
     preferences.getBCHUnits().then(setBCHUnits);
+    preferences.getCurrency().then(setCurrencyUnits);
 
     function setBalance(balance) {
         if (Number(balance) < 0 || isNaN(balance)) {
@@ -118,8 +133,11 @@ $(document).ready(function () {
      *  Send BCH
      */
     $('#sendButton').click(function () {
-        val = Math.floor(Number($('#amount').val() * BCHMultiplier));
+      currencyManager.BCHvalue($('#amount').val()).then(function(amount){
+        val = Math.floor(Number(amount * BCHMultiplier));
+
         address = $('#sendAddress').val();
+        opreturn = undefined;
         var balance = wallet.getBalance();
         FEE = wallet.getFee();
         var validAmount = true;
@@ -169,6 +187,7 @@ $(document).ready(function () {
                 confirmSend();
             }
         }
+        });
     });
 
     $('#confirmSendButton').click(function () {
@@ -178,7 +197,7 @@ $(document).ready(function () {
     function confirmSend() {
         $('#cover').show();
         var password = $('#sendConfirmationPassword').val();
-        wallet.send(address, val, FEE, password).then(function () {
+        wallet.send(address, val, FEE, password,undefined,opreturn).then(function () {
             $('#amount').val(null);
             $('#sendAddress').val(null);
             $('#amountLabel').text('Amount:');
@@ -456,6 +475,103 @@ $(document).ready(function () {
         return false;
     });
 
+
+
+
+    /*
+     * Post Message
+     */
+    $('#NeedOneField').hide();
+
+    // $("#postContent").keyup(function(){
+    //   $("#contentLabel").text("Post Content: "+$(this).val().length+"/217");
+    // });
+
+    $('#postMessage').on('click',function(){
+
+      //make sure that only one field is filled in
+      post_content = $('#postContent').val();
+      change_username = $('#ChangeUsername').val();
+      if ((post_content === "" && change_username === "") || (post_content !== "" && change_username !== "")){
+      $('#NeedOneField').slideDown();
+      return false;
+
+    }else{
+
+      //get code for either memo or blockpress
+      var raw_op = "";
+      var post_code = [];
+      if (post_content !== ""){
+        raw_op = post_content;
+        if($('#memocheck').is(':checked')){
+          post_code.push("6d024c");
+        }
+        if($('#blockpresscheck').is(':checked')){
+          post_code.push("8d024c");
+        }
+
+
+      }else if(change_username !== ""){
+        raw_op = change_username;
+        if($('#memocheck').is(':checked')){
+          post_code.push("6d014c");
+        }
+        if($('#blockpresscheck').is(':checked')){
+          post_code.push("8d014c");
+        }
+      }
+
+
+      address = wallet.getAddress();
+
+      //turn text into UTF-8 encoded string, for sending in OP_RETURN
+      var text_list = encodeURI(raw_op).split('%');
+      var formatted_list = [];
+
+      for (var i = 0; i < text_list[0].length; i++) {
+        formatted_list.push(text_list[0].charCodeAt(i).toString(16));
+      }
+      text_list.shift();
+      for (i = 0; i < text_list.length; i++) {
+          formatted_list.push(text_list[i].slice(0,2))
+
+            for (j = 2; j < text_list[i].length; j++){
+              formatted_list.push(text_list[i][j].charCodeAt(0).toString(16))
+            }
+
+      }
+
+      var text_len = formatted_list.length;
+
+      val = 1000;
+      FEE = wallet.getFee();
+      for (var i = 0; i < post_code.length; i++) {
+        var real_len = (text_len).toString(16);
+        if(real_len.length === 1)
+        {
+          real_len = "0"+real_len;
+        }
+        opreturn = post_code[i] + real_len + formatted_list.join('');
+        //if password show message
+        if (wallet.isEncrypted()) {
+            currencyManager.formatAmount(val).then(function (formattedMoney) {
+                var text = 'Are you sure you want to send<br />' + val / BCHMultiplier + ' ' + BCHUnits + ' (<strong>' + formattedMoney + '</strong>)<br />to ' + address + ' ?';
+                $('#sendConfirmationText').html(text);
+                $('#sendConfirmationPassword').val(null);
+                $('#sendConfirmationPasswordIncorrect').hide();
+                $('#sendConfirmationModal').modal().show();
+            });
+        }else{
+        confirmSend();
+        }
+      }
+      $('#postModal').modal('hide');
+      $('#NeedOneField').hide();
+
+
+        }
+      });
+
     /*
      * Resizing
      */
@@ -481,6 +597,7 @@ $(document).ready(function () {
             addon.port.emit('resize', height);
         }
     });
+
 
     function createQRCodeCanvas(text) {
         var sizeMultiplier = 4;

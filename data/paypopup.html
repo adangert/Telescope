@@ -23,12 +23,20 @@
        <input type="text" class="form-control form-control-sm" id="address" autocomplete="off" placeholder="To Address">
    </div>
    <div class="form-group">
-       <input type="number" min="0" step="0.001" class="form-control form-control-sm" id="amount" autocomplete="off" placeholder="Amount (BCH)">
+       <input type="number" min="0" step="0.001" class="form-control form-control-sm" id="amount" autocomplete="off" placeholder="Amount">
    </div>
    <div class="form-group" style="display:none;">
        <input type="password" class="form-control input-sm" id="password" autocomplete="off" placeholder="Password">
    </div>
-   <button id="button" type="button" class="btn btn-primary btn-sm">Send</button>
+ <div class="text-center">
+   <button id="button" type="button" class="btn col-sm-offset btn-primary btn-sm">Send</button>
+   <div id="default-tip" class="btn-toolbar text-center row-fluid">
+   <button id="button1" type="button" class="btn btn-primary btn-space">0.25</button>
+   <button id="button2" type="button" class="btn btn-primary btn-space">0.5</button>
+   <button id="button3" type="button" class="btn btn-primary btn-space">1</button>
+   <button id="button4" type="button" class="btn btn-primary btn-space">5</button>
+    </div>
+  </div>
     <div id="progress" class="progress progress-striped active" style="display:none;">
         <div class="progress-bar progress-bar-info"></div>
     </div>
