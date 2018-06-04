@@ -18,7 +18,9 @@ Features
 * easy one-click default tipping buttons
 
 [Video1](https://youtu.be/JXGEL-mEXhY) basic usage/how to set a password
+
 [Video2](https://www.youtube.com/watch?v=GFrWktc5p1g) bitpay and money button support
+
 [Video3](https://www.youtube.com/watch?v=KvHiY_14zHQ) memo.cash, blockpress, akari-pay, one-click button support
 
 [Chrome extension](https://chrome.google.com/webstore/detail/bitcoin-cash-wallet/oahplndhnkljjjpnlcnbkacomoepfgan?hl=en-US&gl=US)
