@@ -7,6 +7,12 @@ Telescope: a Bitcoin Cash Wallet for Chrome and Firefox
 
 Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.
 
+[Chrome extension](https://chrome.google.com/webstore/detail/bitcoin-cash-wallet/oahplndhnkljjjpnlcnbkacomoepfgan?hl=en-US&gl=US)
+
+[Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/bitcoin-cash-wallet/)
+
+[Telegram](https://t.me/telescopebch)
+
 Features
 =============
 * Bitpay support
@@ -23,11 +29,7 @@ Features
 
 [Video3](https://www.youtube.com/watch?v=KvHiY_14zHQ) memo.cash, blockpress, akari-pay, one-click button support
 
-[Chrome extension](https://chrome.google.com/webstore/detail/bitcoin-cash-wallet/oahplndhnkljjjpnlcnbkacomoepfgan?hl=en-US&gl=US)
 
-[Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/bitcoin-cash-wallet/)
-
-[Telegram](https://t.me/telescopebch)
 
 Security
 --------
