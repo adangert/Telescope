@@ -86,16 +86,15 @@ $(document).ready(function () {
       if ( document.URL.includes("bitpay.com") ) {
         if (/bitcoincash:\?r=https:\/\/bitpay.com\/i\/[0-9a-zA-Z]{20,46}/.test(href)) {
           var amount = 0
-          // return false;
           var bit_pay_address = href.match(/https.*/)[0]
           var what = util.getHeaders(bit_pay_address,{"Accept":"application/payment-request"}).then(function (data) {
               var json_data = JSON.parse(data)
-              amount = json_data["outputs"][0]["amount"];
+              bch_amount = json_data["outputs"][0]["amount"];
               if(one_popup){
                 one_popup = false;
-              showPopup(json_data["outputs"][0]["address"], json_data["outputs"][0]["amount"], rect,bit_pay_address);
+              showPopup(json_data["outputs"][0]["address"], 1, rect,bit_pay_address, bch_amount );
               }
-              resolve();
+              //resolve();
           }, function () {
               reject(Error('Unknown error'));
           });
@@ -115,8 +114,8 @@ $(document).ready(function () {
           var bit_pay_address = href.match(/https.*/)[0]
           var what = util.getHeaders(bit_pay_address,{"Accept":"application/payment-request"}).then(function (data) {
               var json_data = JSON.parse(data)
-              amount = json_data["outputs"][0]["amount"];
-              showPopup(json_data["outputs"][0]["address"], json_data["outputs"][0]["amount"], rect,bit_pay_address);
+              bch_amount = json_data["outputs"][0]["amount"];
+              showPopup(json_data["outputs"][0]["address"], 1, rect,bit_pay_address, bch_amount);
               resolve();
           }, function () {
               reject(Error('Unknown error'));
@@ -144,7 +143,9 @@ $(document).ready(function () {
         return true;
     });
 
-    function showPopup(address, amount, rect, bitpay_url, bitpay_fee) {
+    //amount is in local currency
+    //if bch_amount != undefined, use that instead of amount
+    function showPopup(address, amount, rect, bitpay_url, bch_amount) {
         // removeFrame();
         util.iframe('paypopup.html').then(function (iframe) {
 
@@ -249,14 +250,26 @@ $(document).ready(function () {
             }
 
             function updateButton(value) {
-
-                currencyManager.formatBCH(value).then(function (formattedMoney) {
+              if (typeof bch_amount != 'undefined'){
+                currencyManager.formatAmount(bch_amount).then(function (formattedMoney) {
                     var text = 'Send';
+
                     if (value > 0) {
                         text += ' (' + formattedMoney + ')';
                     }
                     $iframe.find('#button').text(text);
                 });
+              } else
+              {
+                currencyManager.formatBCH(value).then(function (formattedMoney) {
+                    var text = 'Send';
+
+                    if (value > 0) {
+                        text += ' (' + formattedMoney + ')';
+                    }
+                    $iframe.find('#button').text(text);
+                });
+              }
             }
 
             $iframe.find('#main').fadeIn('fast');
@@ -288,10 +301,16 @@ $(document).ready(function () {
                   sending_amount = $iframe.find('#amount').val()
                 }
                 currencyManager.BCHvalue(sending_amount).then(function(newBchAmount){
-                if (!amount) {
-                    newAmount = Math.floor(Number(newBchAmount * BCHMultiplier));
-                } else {
-                    newAmount = amount;
+                //if we have a bch amount specified use that, otherwise use the
+                //local currency amount.
+                if (typeof bch_amount != 'undefined'){
+                  newAmount = bch_amount;
+                }else{
+                  if (!amount) {
+                      newAmount = Math.floor(Number(newBchAmount * BCHMultiplier));
+                  } else {
+                      newAmount = amount;
+                  }
                 }
                 var balance = wallet.getBalance();
                 if (newAmount <= 0) {
@@ -345,9 +364,10 @@ $(document).ready(function () {
                     $iframe.find('#button').fadeOut('fast', function () {
                         $iframe.find('#progress').fadeIn('fast', function () {
                           var use_fee = wallet.getFee();
-                           if (typeof bitpay_fee != 'undefined'){
-                             use_fee = bitpay_fee;
-                           }
+                          //update this at some point to use the bitpay fee
+                           // if (typeof bitpay_fee != 'undefined'){
+                           //   use_fee = bitpay_fee;
+                           // }
                             wallet.send(newAddress, newAmount, use_fee, $iframe.find('#password').val(),bitpay_url).then(function () {
                                 $iframe.find('#progress').fadeOut('fast', function () {
                                     $iframe.find('#successAlert').fadeIn('fast').delay(1000).fadeIn('fast', removeFrame);

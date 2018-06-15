@@ -132,6 +132,7 @@
             });
         },
 
+        //currency to BCH
         formatBCH: function (value) {
             return Promise.all([preferences.getExchangeRate(), this.getSymbol()]).then(function (values) {
                 var rate = values[0],
