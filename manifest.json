@@ -3,7 +3,7 @@
     "name": "Telescope BitcoinCash WebWallet",
     "author": "Aaron Angert",
     "description": "A Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.",
-    "version": "2.6",
+    "version": "2.7",
 
     "icons": {
         "16": "data/bitcoin16.png",
