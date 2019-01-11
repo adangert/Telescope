@@ -68,16 +68,16 @@ $(document).ready(function () {
         });
     }
 
-    $('body').on('mouseover', 'iframe', function (e) {
-      var src = $(this).attr('src');
-      if (/^https:\/\/www.moneybutton.com.*/.test(src)) {
-        var moneybutton_address = src.match(/(q|p)[0-9a-zA-Z]{40,44}/)[0]
-        if(one_popup){
-          one_popup = false;
-        showPopup(moneybutton_address, null, this.getBoundingClientRect());
-        }
-      }
-    });
+    // $('body').on('mouseover', 'iframe', function (e) {
+    //   var src = $(this).attr('src');
+    //   if (/^https:\/\/www.moneybutton.com.*/.test(src)) {
+    //     var moneybutton_address = src.match(/(q|p)[0-9a-zA-Z]{40,44}/)[0]
+    //     if(one_popup){
+    //       one_popup = false;
+    //     showPopup(moneybutton_address, null, this.getBoundingClientRect());
+    //     }
+    //   }
+    // });
 
 
     $('body').on('mouseover', 'a', function (e) {
@@ -103,6 +103,76 @@ $(document).ready(function () {
         }
       }
     });
+
+
+    $('body').on('mouseenter', 'button', function (e) {
+      var rect =  this.getBoundingClientRect();
+      var button_class = $(this).attr('class');
+      if(button_class == "pay-button"){
+        var amount = $(this).attr('amount');
+          var address = $(this).attr('address');
+          var amountType = $(this).attr('amount-type');
+
+
+
+          if (/^(bitcoincash:)?(Q|P|p|q)[0-9a-zA-Z]{38,46}$/.test(String(address))) {
+
+            if(amountType == "BCH"){
+              showPopup(address, amount, rect, null, amount*100000000);
+
+            }
+            else if (amountType == "Satoshi") {
+              showPopup(address, amount, rect, null, amount);
+            }else{
+
+
+            util.getJSON("https://index-api.bitcoin.com/api/v0/cash/price/" + amountType).then(function (response) {
+              console.log(response);
+
+              if (response.price != "") {
+                  //determine amount of satoshi based on button value
+                  var addDecimal = response.price / 100;
+                  var satoshiAmount = Math.floor((100000000 / addDecimal) * amount);
+                  console.log(satoshiAmount);
+                  showPopup(address, satoshiAmount, rect, null, satoshiAmount);
+                  // var showSatoshi = satoshiAmount / 100000000;
+                  // showSatoshi = showSatoshi.toPrecision(7);
+                  // console.log(showSatoshi);
+                  //var pricePersatoshi = addDecimal / 100000000;
+                }
+        });
+      }
+      }
+        return true;
+      }
+
+
+
+      //
+      // var href = $(this).attr('href');
+      // var rect =  this.getBoundingClientRect();
+      // if ( document.URL.includes("bitpay.com") ) {
+      //   if (/bitcoincash:\?r=https:\/\/bitpay.com\/i\/[0-9a-zA-Z]{20,46}/.test(href)) {
+      //     var amount = 0
+      //     var bit_pay_address = href.match(/https.*/)[0]
+      //     var what = util.getHeaders(bit_pay_address,{"Accept":"application/payment-request"}).then(function (data) {
+      //         var json_data = JSON.parse(data)
+      //         bch_amount = json_data["outputs"][0]["amount"];
+      //         if(one_popup){
+      //           one_popup = false;
+      //         showPopup(json_data["outputs"][0]["address"], 1, rect,bit_pay_address, bch_amount );
+      //         }
+      //         //resolve();
+      //     }, function () {
+      //         reject(Error('Unknown error'));
+      //     });
+      //     // console.log(return_json);
+      //     return false;
+      //   }
+      // }
+    });
+
+
     // Intercept all anchor clicks and determine if they are bitcoin pay links
     $('body').on('click', 'a', function (e) {
         var href = $(this).attr('href');

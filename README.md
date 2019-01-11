@@ -16,7 +16,7 @@ Bitcoin Cash wallet in the browser. Send and receive instantly on any web page.
 Features
 =============
 * Bitpay support
-* Moneybutton support
+* PayButton support
 * AKARI-PAY support
 * memo.cash posting support
 * blockpress.com posting support

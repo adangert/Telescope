@@ -16,12 +16,13 @@
 
         updateExchangeRate: function () {
             return preferences.getCurrency().then(function (currency) {
-                return util.getJSON('https://api.coinmarketcap.com/v1/ticker/bitcoin-cash/?convert=' + currency);;
+                // return util.getJSON('https://api.coinmarketcap.com/v1/ticker/bitcoin-cash/?convert=' + currency);;
+                return util.getJSON('https://index-api.bitcoin.com/api/v0/cash/price/' + currency);;
             }).then(function (response) {
 
 
                 return preferences.getCurrency().then(function (currency) {
-                  return preferences.setExchangeRate(response[0]['price_'+currency.toLowerCase()]);
+                  return preferences.setExchangeRate(response['price']/100);
 
                 });
 
@@ -131,6 +132,18 @@
                 return text;
             });
         },
+
+        // BCHvalueFromCurrency: function (value,currency){
+        //     return Promise.all([preferences.getExchangeRate(), this.getSymbol()]).then(function (values) {
+        //         var rate = values[0],
+        //             symbol = values[1][0],
+        //             beforeOrAfter = values[1][1],
+        //             SATOSHIS = 100000000,
+        //             text = (value / rate).toFixed(8);
+        //
+        //         return text;
+        //     });
+        // },
 
         //currency to BCH
         formatBCH: function (value) {
