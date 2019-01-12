@@ -210,7 +210,8 @@
                 // Check blockchain.info for the current balance
                 //https://bitcoincash.blockexplorer.com/api/addr/
                 //https://bch-insight.bitpay.com/api/addr/
-                util.get('https://bitcoincash.blockexplorer.com/api/addr/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
+                //https://bitcoincash.blockexplorer.com/api/addr/
+                util.get('https://rest.bitcoin.com/v1/address/details/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
                     var json = JSON.parse(response);
                     //bitpay, only balanceSat, blockdozer and blockexplorer use both
 
@@ -358,7 +359,8 @@
                 // Get all unspent outputs from blockchain.info to generate our inputs
                 //https://bch-insight.bitpay.com/api/addr/
                 //https://blockdozer.com/insight-api/addr/
-                util.getJSON('https://bitcoincash.blockexplorer.com/api/addr/' + address+'/utxo?nocache='+ new Date().getTime()).then(function (json) {
+                //?nocache='+ new Date().getTime()
+                util.getJSON('https://rest.bitcoin.com/v1/address/utxo/' + address).then(function (json) {
                     var inputs = json,
                         selectedOuts = [];
                         //eckey = new Bitcoin.ECKey(decryptedPrivateKey),
@@ -392,15 +394,15 @@
                           availableValue = availableValue.add(new bigInt('' + inputs[i].satoshis, 10));
 
                           // If we ever need to switch to the new address
-                          var new_address = '';
-                          if (inputs[i].address.indexOf("bitcoincash:") == -1){
-                            new_address = 'bitcoincash:'+inputs[i].address;
-                          }else{
-                            new_address = inputs[i].address;
-                          }
+                          // var new_address = '';
+                          // if (inputs[i].address.indexOf("bitcoincash:") == -1){
+                          //   new_address = 'bitcoincash:'+inputs[i].address;
+                          // }else{
+                          //   new_address = inputs[i].address;
+                          // }
 
-                          legacy_utxo_address = bch.Address.fromString(new_address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
-
+                          // legacy_utxo_address = bch.Address.fromString(new_address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
+                          legacy_utxo_address = inputs[i].legacyAddress
                           //inputs[i].address
 
                           var utxo = {
@@ -517,14 +519,15 @@
 
                       }else {
 
-                         var data = JSON.stringify({'rawtx': transaction.toString()});
+                         //var data = JSON.stringify({'rawtx': transaction.toString()});
                         //var data = 'rawtx='+ transaction.toString();
                         //var insight = new explorer.Insight('https://bch-insight.bitpay.com');
                         console.log(transaction.toString());
                         console.log(data);
                         headers = {'Content-type': 'application/json'};
                         //https://blockdozer.com/insight-api/tx/send
-                        util.postHeaders('https://bitcoincash.blockexplorer.com/api/tx/send', data, headers).then(function () {
+                        //https://bitcoincash.blockexplorer.com/api/tx/send
+                        util.post('https://rest.bitcoin.com/v1/rawtransactions/sendRawTransaction/'+transaction.toString(), headers).then(function () {
                             // Notify the balance listener of the changed amount immediately,
                             // but don't set the balance since the transaction will be processed by the websocket
                             //if (balanceListener) balanceListener(balance - amount - fee);
