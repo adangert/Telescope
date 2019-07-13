@@ -186,18 +186,20 @@
 
 
     function updateFee(){
-      preferences.getLastFee().then(function (result) {
-          fee = result;
-
-
-      util.get('https://blockdozer.com/insight-api/utils/estimatefee/' + '?nocache=' + new Date().getTime()).then(function (response) {
-          var json = JSON.parse(response);
-          //the number of satoshis
-          fee = Math.round(100000000 * json[2]);
-          // json["balanceSat"] + json["unconfirmedBalanceSat"];
-          return preferences.setLastFee(fee);
-      })
-    });
+      fee = 1000;
+      preferences.setLastFee(fee);
+    //   preferences.getLastFee().then(function (result) {
+    //       fee = result;
+    //
+    //
+    //   util.get('https://blockdozer.com/insight-api/utils/estimatefee/' + '?nocache=' + new Date().getTime()).then(function (response) {
+    //       var json = JSON.parse(response);
+    //       //the number of satoshis
+    //       fee = Math.round(100000000 * json[2]);
+    //       // json["balanceSat"] + json["unconfirmedBalanceSat"];
+    //       return preferences.setLastFee(fee);
+    //   })
+    // });
     }
     // Gets the current balance and sets up a websocket to monitor new transactions
     function updateBalance() {
@@ -211,7 +213,7 @@
                 //https://bitcoincash.blockexplorer.com/api/addr/
                 //https://bch-insight.bitpay.com/api/addr/
                 //https://bitcoincash.blockexplorer.com/api/addr/
-                util.get('https://rest.bitcoin.com/v1/address/details/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
+                util.get('https://rest.bitcoin.com/v2/address/details/' + address + '?nocache=' + new Date().getTime()).then(function (response) {
                     var json = JSON.parse(response);
                     //bitpay, only balanceSat, blockdozer and blockexplorer use both
 
@@ -360,8 +362,8 @@
                 //https://bch-insight.bitpay.com/api/addr/
                 //https://blockdozer.com/insight-api/addr/
                 //?nocache='+ new Date().getTime()
-                util.getJSON('https://rest.bitcoin.com/v1/address/utxo/' + address).then(function (json) {
-                    var inputs = json,
+                util.getJSON('https://rest.bitcoin.com/v2/address/utxo/' + address).then(function (json) {
+                    var inputs = json.utxos,
                         selectedOuts = [];
                         //eckey = new Bitcoin.ECKey(decryptedPrivateKey),
                         // Total cost is amount plus fee
@@ -402,14 +404,14 @@
                           // }
 
                           // legacy_utxo_address = bch.Address.fromString(new_address,'livenet','pubkeyhash',bch.Address.CashAddrFormat).toString();
-                          legacy_utxo_address = inputs[i].legacyAddress
+                          legacy_utxo_address = json.legacyAddress
                           //inputs[i].address
 
                           var utxo = {
                           'txId' : inputs[i].txid,
                           'outputIndex' : inputs[i].vout,
                           'address' : legacy_utxo_address,
-                          'script' : inputs[i].scriptPubKey,
+                          'script' : json.scriptPubKey,
                           'satoshis' : inputs[i].satoshis
                         };
                           console.log(utxo);
@@ -527,7 +529,7 @@
                         headers = {'Content-type': 'application/json'};
                         //https://blockdozer.com/insight-api/tx/send
                         //https://bitcoincash.blockexplorer.com/api/tx/send
-                        util.post('https://rest.bitcoin.com/v1/rawtransactions/sendRawTransaction/'+transaction.toString(), headers).then(function () {
+                        util.get('https://rest.bitcoin.com/v2/rawtransactions/sendRawTransaction/'+transaction.toString()).then(function () {
                             // Notify the balance listener of the changed amount immediately,
                             // but don't set the balance since the transaction will be processed by the websocket
                             //if (balanceListener) balanceListener(balance - amount - fee);
